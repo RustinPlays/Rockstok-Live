@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rockstok Covers | Auckland Live Covers Band</title>
+  <meta name="description" content="Rockstok Covers - Auckland live covers band for pubs, private events, weddings, fundraisers and corporate nights. Upcoming gigs, merch, band info and bookings." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="smoke-bg smoke-a"></div>
+  <div class="smoke-bg smoke-b"></div>
+
+  <header class="site-header" id="top">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="Rockstok Covers home">
+        <img class="brand-logo" src="assets/rockstok-logo.jpg" alt="Rockstok logo" />
+        <span>Rockstok</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="#about">About</a>
+        <a href="#gigs">Gigs</a>
+        <a href="#music">Music</a>
+        <a href="#merch">Merch</a>
+        <a href="#band">Band</a>
+        <a href="#bookings">Bookings</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section-top">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Auckland covers band</p>
+          <h1>Rock, pop, classics & party anthems.</h1>
+          <p class="lead">Rockstok brings live energy, familiar songs and proper singalong moments to pubs, private events, birthdays, weddings, fundraisers and corporate nights.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#bookings">Book Rockstok</a>
+            <a class="button ghost" href="#gigs">See Upcoming Gigs</a>
+            <a class="button ghost" href="#merch">Shop Merch</a>
+          </div>
+          <div class="stat-strip">
+            <span><strong>Live band</strong> for real crowds</span>
+            <span><strong>NZD merch</strong> via Fourthwall</span>
+            <span><strong>North Auckland</strong> and beyond</span>
+          </div>
+        </div>
+
+        <aside class="hero-card glass-panel">
+          <img class="hero-logo" src="assets/rockstok-logo.jpg" alt="Rockstok magical cauldron logo" />
+          <div class="next-show">
+            <span class="pill">Next up</span>
+            <h2 id="nextGigTitle">Bookings open now</h2>
+            <p id="nextGigDetails">Add public dates in config.js and this card will update automatically.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section wrap two-col" id="about">
+      <div>
+        <p class="eyebrow">About Rockstok</p>
+        <h2>A live covers band built for good nights.</h2>
+      </div>
+      <div class="copy-block">
+        <p>Rockstok is a live covers band with a set built around songs people know, love, and can sing along to. The site is styled around the aqua, smoky, magical cauldron look from the Rockstok logo while keeping everything clean enough for bookings and merch.</p>
+        <p>Use this page as the main band hub: upcoming shows, band info, booking contact, social links, and a Fourthwall-powered merch section all in one place.</p>
+      </div>
+    </section>
+
+    <section class="section wrap" id="gigs">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Live dates</p>
+          <h2>Upcoming Gigs</h2>
+        </div>
+        <p>Drop in, sing along, or use the details below to plan your next night out.</p>
+      </div>
+      <div class="gig-list" id="gigList"></div>
+    </section>
+
+    <section class="section services-section" id="music">
+      <div class="wrap">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">What we play</p>
+            <h2>Made for pubs, parties & events.</h2>
+          </div>
+          <p>Keep this flexible, or replace these cards with a real song list, videos, photos, and testimonials later.</p>
+        </div>
+
+        <div class="services-grid">
+          <article class="info-card glass-panel">
+            <span class="icon">⚡</span>
+            <h3>Rock Classics</h3>
+            <p>Big guitars, strong hooks, familiar choruses and the kind of songs that get people moving.</p>
+          </article>
+          <article class="info-card glass-panel">
+            <span class="icon">🎤</span>
+            <h3>Singalong Anthems</h3>
+            <p>Party favourites and crowd-friendly covers for birthdays, pubs, fundraisers and private events.</p>
+          </article>
+          <article class="info-card glass-panel">
+            <span class="icon">🍻</span>
+            <h3>Venue Ready</h3>
+            <p>Perfect for breweries, bars, community nights, corporate functions, and special occasions.</p>
+          </article>
+        </div>
+
+        <div class="setlist glass-panel">
+          <div>
+            <p class="eyebrow">Set style</p>
+            <h3>Classic rock energy with a party-band feel.</h3>
+          </div>
+          <div class="tag-cloud" id="songTags"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section merch-section" id="merch">
+      <div class="wrap">
+        <div class="section-heading merch-heading">
+          <div>
+            <p class="eyebrow">Official merch</p>
+            <h2>Merch Store</h2>
+            <p>Products are loaded from the Fourthwall Storefront API using the token in config.js.</p>
+          </div>
+          <a class="button small ghost" id="viewFourthwallShop" href="#" target="_blank" rel="noopener">Open Full Shop</a>
+        </div>
+        <div class="notice" id="merchNotice">Loading merch…</div>
+        <div class="product-grid" id="productGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="band">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Meet the band</p>
+          <h2>The people behind Rockstok.</h2>
+        </div>
+        <p>Band photos are included locally so the site loads fast and doesn’t depend on another page being available.</p>
+      </div>
+      <div class="band-grid" id="bandGrid"></div>
+    </section>
+
+    <section class="section wrap booking-section" id="bookings">
+      <div class="booking-copy">
+        <p class="eyebrow">Bookings</p>
+        <h2>Bring Rockstok to your event.</h2>
+        <p>Tell us the date, location, event type, rough timings and anything important about the crowd or venue.</p>
+
+        <div class="contact-stack">
+          <article class="contact-card glass-panel">
+            <strong>Band Inquiries</strong>
+            <span>Sean — <a href="tel:+6421416091">021 416 091</a></span>
+            <span>Norm — <a href="tel:+64274432642">027 443 2642</a></span>
+            <span><a href="mailto:rockstokcovers@gmail.com">rockstokcovers@gmail.com</a></span>
+          </article>
+          <article class="contact-card glass-panel">
+            <strong>Follow Rockstok</strong>
+            <span><a href="https://instagram.com/rockstokcovers" target="_blank" rel="noopener">Instagram</a></span>
+            <span><a href="https://facebook.com/rockstokcovers" target="_blank" rel="noopener">Facebook</a></span>
+          </article>
+        </div>
+      </div>
+
+      <form class="booking-card glass-panel" id="bookingForm">
+        <label>
+          Your name
+          <input name="name" placeholder="Your name" required />
+        </label>
+        <label>
+          Event date
+          <input name="date" type="date" />
+        </label>
+        <label>
+          Venue / location
+          <input name="venue" placeholder="Venue, suburb, or city" />
+        </label>
+        <label>
+          Event type
+          <select name="eventType">
+            <option value="Private event">Private event</option>
+            <option value="Pub / bar gig">Pub / bar gig</option>
+            <option value="Wedding">Wedding</option>
+            <option value="Birthday">Birthday</option>
+            <option value="Fundraiser">Fundraiser</option>
+            <option value="Corporate event">Corporate event</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
+          Message
+          <textarea name="message" rows="5" placeholder="Tell us about the event…" required></textarea>
+        </label>
+        <button class="button primary" type="submit">Email Booking Enquiry</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <strong>Rockstok Covers</strong>
+        <p>Live covers, upcoming gigs, merch and bookings.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#top">Top</a>
+        <a href="#about">About</a>
+        <a href="#gigs">Gigs</a>
+        <a href="#merch">Merch</a>
+        <a href="#bookings">Bookings</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
