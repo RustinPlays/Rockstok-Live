@@ -19,7 +19,9 @@
         <img class="brand-logo" src="assets/logo.png" alt="Rockstok logo" />
         <span>Rockstok</span>
       </a>
+
       <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+
       <div class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -46,6 +48,7 @@
             <span>Norm - <a href="tel:+64274432642">027 443 2642</a></span>
             <span><a href="mailto:rockstokcovers@gmail.com">rockstokcovers@gmail.com</a></span>
           </article>
+
           <article class="contact-card glass-panel">
             <strong>Follow Rockstok</strong>
             <span><a href="https://instagram.com/rockstokcovers" target="_blank" rel="noopener">Instagram</a></span>
@@ -54,27 +57,47 @@
         </div>
       </div>
 
-      <form class="booking-card glass-panel booking-form" action="https://formspree.io/f/maqzqaob" method="POST">
+      <form
+        class="booking-card glass-panel booking-form"
+        action="https://formspree.io/f/maqzqaob"
+        method="POST"
+      >
         <input type="hidden" name="_subject" value="New Rockstok Booking Enquiry" />
+
         <label>
           Your name
-          <input name="name" placeholder="Your name" required />
+          <input type="text" name="name" placeholder="Your name" required />
         </label>
+
         <label>
           Event date
-          <input name="date" type="date" />
+          <input type="date" name="date" required />
         </label>
+
+        <label>
+          Email address
+          <input type="email" name="email" placeholder="Your email address" required />
+        </label>
+
+        <label>
+          Phone number
+          <input type="tel" name="phone" placeholder="Best phone number" required />
+        </label>
+
         <label>
           Venue / suburb / city
-          <input name="venue" placeholder="Venue, suburb, or city" />
+          <input type="text" name="venue" placeholder="Venue, suburb, or city" />
         </label>
+
         <label>
-          Phone / email
-          <input name="contact" placeholder="Best phone number or email" required />
+          Estimated attendance
+          <input type="number" name="estimated_attendance" placeholder="Approximate number of guests" min="1" />
         </label>
+
         <label>
           Event type
-          <select name="eventType">
+          <select name="eventType" required>
+            <option value="">Select event type</option>
             <option value="Private event">Private event</option>
             <option value="Pub / bar gig">Pub / bar gig</option>
             <option value="Wedding">Wedding</option>
@@ -84,10 +107,17 @@
             <option value="Other">Other</option>
           </select>
         </label>
+
         <label>
           Extra notes
-          <textarea name="notes" rows="6" placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..." required></textarea>
+          <textarea
+            name="message"
+            rows="6"
+            placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..."
+            required
+          ></textarea>
         </label>
+
         <button class="button primary" type="submit">Send Booking Enquiry</button>
       </form>
     </section>
@@ -99,6 +129,7 @@
         <strong>Rockstok</strong>
         <p>Classic covers, original music, upcoming gigs, merch and bookings.</p>
       </div>
+
       <div class="footer-links">
         <a href="#top">Top</a>
         <a href="about.html">About</a>
