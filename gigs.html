@@ -9,6 +9,7 @@
   <link rel="apple-touch-icon" href="assets/logo.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div class="smoke-bg smoke-a"></div>
   <div class="smoke-bg smoke-b"></div>
@@ -19,7 +20,9 @@
         <img class="brand-logo" src="assets/logo.png" alt="Rockstok logo" />
         <span>Rockstok</span>
       </a>
+
       <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+
       <div class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -39,9 +42,13 @@
           <p class="eyebrow">Live dates</p>
           <h1>Upcoming Gigs</h1>
         </div>
+
         <p>Drop in, sing along, or use the details below to plan your next night out.</p>
       </div>
-      <div class="gig-list" id="gigList"></div>
+
+      <div class="gig-list" id="gigs-list">
+        <p>Loading gigs...</p>
+      </div>
     </section>
   </main>
 
@@ -51,6 +58,7 @@
         <strong>Rockstok</strong>
         <p>Classic covers, original music, upcoming gigs, merch and bookings.</p>
       </div>
+
       <div class="footer-links">
         <a href="#top">Top</a>
         <a href="about.html">About</a>
@@ -69,5 +77,8 @@
 
   <script src="config.js"></script>
   <script src="app.js"></script>
+
+  <!-- Live Firebase gigs loader -->
+  <script type="module" src="gigs-live.js"></script>
 </body>
 </html>
