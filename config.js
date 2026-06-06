@@ -11,47 +11,52 @@ window.ROCKSTOK_CONFIG = {
   FOURTHWALL_SHOP_BASE_URL: "https://rockstok.live/en-nzd",
   DEFAULT_CURRENCY: "NZD",
 
-  bookingEmail: "rockstokcovers@gmail.com",
+  // Testing address. Change this to rockstokcovers@gmail.com when ready.
+  bookingEmail: "Justin.oshea135@gmail.com",
 
   // Add confirmed public gigs here. Example format:
-  // { date: "2026-09-27", title: "Rockstok Live", venue: "Paraoa Brewing Co.", location: "Whangaparāoa", time: "8:00 PM", ticketUrl: "" }
+  // { date: "2026-09-27", title: "Rockstok Live", venue: "Paraoa Brewing Co.", location: "Whangaparaoa", time: "8:00 PM", ticketUrl: "" }
   gigs: [],
 
   songTags: [
-    "Classic Rock",
-    "Pub Favourites",
-    "Party Anthems",
-    "Singalongs",
-    "80s / 90s Energy",
-    "Guitar-Driven Covers",
-    "Crowd Pleasers",
-    "Feel-Good Nights"
+    "Dragon",
+    "The Cars",
+    "Green Day",
+    "My Chemical Romance",
+    "Hello Sailor",
+    "The Cure",
+    "Beastie Boys",
+    "R.E.M.",
+    "Pink Floyd",
+    "Original Rockstok Songs",
+    "Classic Covers",
+    "Modern Favourites"
   ],
 
   band: [
     {
       name: "Sean O'Shea",
-      role: "Guitar",
-      bio: "Brings stage energy, sharp riffs and big singalong vibes to the Rockstok set.",
-      image: "assets/sean-oshea.png"
+      role: "Lead Vocals, Rhythm & Acoustic Guitar",
+      bio: "Frontman, riff wrangler and chief crowd-starter.",
+      image: "assets/Sean.png"
     },
     {
       name: "Craig Garret",
-      role: "Guitar",
-      bio: "A smooth mix of classic rock feel and melodic hooks that helps drive the band’s live sound.",
-      image: "assets/craig-garret.png"
+      role: "Lead Guitar & Backing Vocals",
+      bio: "Sends solos skyward and keeps the choruses stacked.",
+      image: "assets/Craig.png"
     },
     {
       name: "Norman Smith",
-      role: "Bass",
-      bio: "Holding down the low end and the groove with a laid-back presence and solid rock backbone.",
-      image: "assets/norman-smith.png"
+      role: "Bass & Backing Vocals",
+      bio: "Locks the groove, drives the low end and sneaks in the harmonies.",
+      image: "assets/Norm.png"
     },
     {
       name: "Kuzma Rabadan",
       role: "Drums",
-      bio: "Keeping the pulse moving and the room alive with punchy rhythms and feel-good energy.",
-      image: "assets/kuzma-rabadan.png"
+      bio: "Keeps the engine roaring and the dance floor honest.",
+      image: "assets/Kuzma.png"
     }
   ]
 };

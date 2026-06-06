@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book Rockstok | Auckland Rock Band</title>
+  <meta name="description" content="Book Rockstok for pubs, private events, corporate functions, parties and weddings across Auckland and beyond." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="smoke-bg smoke-a"></div>
+  <div class="smoke-bg smoke-b"></div>
+
+  <header class="site-header" id="top">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="index.html#top" aria-label="Rockstok home">
+        <img class="brand-logo" src="assets/logo.png" alt="Rockstok logo" />
+        <span>Rockstok</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="gigs.html">Gigs</a>
+        <a href="music.html">Music</a>
+        <a href="merch.html">Merch</a>
+        <a href="band.html">Band</a>
+        <a class="active" href="booking.html">Bookings</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section wrap booking-section booking-page-section" id="bookings">
+      <div class="booking-copy">
+        <p class="eyebrow">Bookings</p>
+        <h1>Bring Rockstok to your event.</h1>
+        <p>Send through the essentials and the band will come back to you about availability, setup and next steps.</p>
+
+        <div class="contact-stack">
+          <article class="contact-card glass-panel">
+            <strong>Band Inquiries</strong>
+            <span>Sean - <a href="tel:+6421416091">021 416 091</a></span>
+            <span>Norm - <a href="tel:+64274432642">027 443 2642</a></span>
+            <span><a href="mailto:rockstokcovers@gmail.com">rockstokcovers@gmail.com</a></span>
+          </article>
+          <article class="contact-card glass-panel">
+            <strong>Follow Rockstok</strong>
+            <span><a href="https://instagram.com/rockstokcovers" target="_blank" rel="noopener">Instagram</a></span>
+            <span><a href="https://facebook.com/rockstokcovers" target="_blank" rel="noopener">Facebook</a></span>
+          </article>
+        </div>
+      </div>
+
+      <form class="booking-card glass-panel booking-form">
+        <label>
+          Your name
+          <input name="name" placeholder="Your name" required />
+        </label>
+        <label>
+          Event date
+          <input name="date" type="date" />
+        </label>
+        <label>
+          Venue / suburb / city
+          <input name="venue" placeholder="Venue, suburb, or city" />
+        </label>
+        <label>
+          Phone / email
+          <input name="contact" placeholder="Best phone number or email" required />
+        </label>
+        <label>
+          Event type
+          <select name="eventType">
+            <option value="Private event">Private event</option>
+            <option value="Pub / bar gig">Pub / bar gig</option>
+            <option value="Wedding">Wedding</option>
+            <option value="Birthday">Birthday</option>
+            <option value="Fundraiser">Fundraiser</option>
+            <option value="Corporate event">Corporate event</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
+          Extra notes
+          <textarea name="notes" rows="6" placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..." required></textarea>
+        </label>
+        <button class="button primary" type="submit">Send Booking Enquiry</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <strong>Rockstok</strong>
+        <p>Classic covers, original music, upcoming gigs, merch and bookings.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#top">Top</a>
+        <a href="about.html">About</a>
+        <a href="gigs.html">Gigs</a>
+        <a href="music.html">Music</a>
+        <a href="merch.html">Merch</a>
+        <a href="band.html">Band</a>
+        <a href="booking.html">Bookings</a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="backstage-link" href="rockstok-backstage-135.html" target="_blank" rel="noopener" aria-label="Backstage access" title="Backstage">
+    <img src="assets/logo.png" alt="" />
+  </a>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

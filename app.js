@@ -1,5 +1,19 @@
 const cfg = window.ROCKSTOK_CONFIG || {};
 const $ = (selector) => document.querySelector(selector);
+const GIG_STORE_KEY = 'rockstokAdminGigs';
+
+function readStoredGigs() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(GIG_STORE_KEY) || 'null');
+    return Array.isArray(stored) ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+function getSiteGigs() {
+  return readStoredGigs() || cfg.gigs || [];
+}
 
 function cleanBaseUrl() {
   if (cfg.FOURTHWALL_SHOP_BASE_URL) {
@@ -27,35 +41,48 @@ function formatDate(dateString) {
   };
 }
 
+function isGigVisible(gig) {
+  if (!gig?.date) return false;
+  const expiry = new Date(`${gig.date}T23:59:59`);
+  if (Number.isNaN(expiry.getTime())) return false;
+  expiry.setDate(expiry.getDate() + 1);
+  return expiry >= new Date();
+}
+
 function renderGigs() {
   const list = $('#gigList');
-  const gigs = [...(cfg.gigs || [])]
+  if (!list) return;
+  const gigs = [...getSiteGigs()]
     .filter(gig => gig && gig.date)
+    .filter(isGigVisible)
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   if (!gigs.length) {
+    // Keep this visitor-facing; maintenance notes belong in README.md.
     list.innerHTML = `
       <article class="empty-card glass-panel">
         <span class="pill">Coming soon</span>
-        <h3>No public gigs listed yet</h3>
-        <p>Add confirmed dates in <code>config.js</code>. Until then, this section works as a clean placeholder so venues and fans know gigs are coming.</p>
-        <a class="button ghost" href="#bookings">Enquire about bookings</a>
+        <h3>Fresh dates coming soon</h3>
+        <p>Rockstok is lining up the next run of shows. For private events, venues and party bookings, get in touch below.</p>
+        <a class="button ghost" href="booking.html">Enquire about bookings</a>
       </article>`;
-    $('#nextGigTitle').textContent = 'Bookings open now';
-    $('#nextGigDetails').textContent = 'Public gig dates can be added in config.js when confirmed.';
+    const nextGigTitle = $('#nextGigTitle');
+    const nextGigDetails = $('#nextGigDetails');
+    if (nextGigTitle) nextGigTitle.textContent = 'Bookings open now';
+    if (nextGigDetails) nextGigDetails.textContent = 'Want Rockstok at your venue or event? Send an enquiry and we will get back to you.';
     return;
   }
 
   list.innerHTML = gigs.map(gig => {
     const d = formatDate(gig.date);
-    const href = gig.ticketUrl || '#bookings';
+    const href = gig.ticketUrl || 'booking.html';
     const buttonText = gig.ticketUrl ? 'Details / Tickets' : 'Enquire';
     return `
       <article class="gig-card glass-panel">
         <div class="gig-date"><span>${d ? d.month : 'TBC'}</span><strong>${d ? d.day : '--'}</strong></div>
         <div>
           <h3>${gig.title}</h3>
-          <p class="gig-meta">${d ? d.full : 'Date TBC'} · ${gig.time || 'Time TBC'} · ${gig.venue || 'Venue TBC'}${gig.location ? ` · ${gig.location}` : ''}</p>
+          <p class="gig-meta">${d ? d.full : 'Date TBC'} - ${gig.time || 'Time TBC'} - ${gig.venue || 'Venue TBC'}${gig.location ? ` - ${gig.location}` : ''}</p>
         </div>
         <a class="button ghost" href="${href}" ${gig.ticketUrl ? 'target="_blank" rel="noopener"' : ''}>${buttonText}</a>
       </article>`;
@@ -63,16 +90,20 @@ function renderGigs() {
 
   const next = gigs.find(gig => new Date(`${gig.date}T23:59:59`) >= new Date()) || gigs[0];
   const d = formatDate(next.date);
-  $('#nextGigTitle').textContent = next.venue || next.title;
-  $('#nextGigDetails').textContent = `${d ? d.full : 'Date TBC'} · ${next.time || 'Time TBC'}${next.location ? ` · ${next.location}` : ''}`;
+  const nextGigTitle = $('#nextGigTitle');
+  const nextGigDetails = $('#nextGigDetails');
+  if (nextGigTitle) nextGigTitle.textContent = next.venue || next.title;
+  if (nextGigDetails) nextGigDetails.textContent = `${d ? d.full : 'Date TBC'} - ${next.time || 'Time TBC'}${next.location ? ` - ${next.location}` : ''}`;
 }
 
 function renderSongTags() {
+  if (!$('#songTags')) return;
   const tags = cfg.songTags || [];
   $('#songTags').innerHTML = tags.map(tag => `<span>${tag}</span>`).join('');
 }
 
 function renderBand() {
+  if (!$('#bandGrid')) return;
   $('#bandGrid').innerHTML = (cfg.band || []).map(member => `
     <article class="band-card glass-panel">
       <div class="band-image-wrap">
@@ -113,6 +144,7 @@ async function loadFourthwallProducts() {
   const notice = $('#merchNotice');
   const grid = $('#productGrid');
   const shopButton = $('#viewFourthwallShop');
+  if (!notice || !grid || !shopButton) return;
   const base = cleanBaseUrl();
 
   if (base) {
@@ -122,7 +154,7 @@ async function loadFourthwallProducts() {
   }
 
   if (!cfg.FOURTHWALL_STOREFRONT_TOKEN) {
-    notice.textContent = 'Fourthwall token not added yet. Showing placeholder merch cards.';
+    notice.textContent = 'Merch is coming soon. Ask the band about shirts, hoodies and extras.';
     renderFallbackProducts();
     return;
   }
@@ -143,7 +175,7 @@ async function loadFourthwallProducts() {
     notice.textContent = '';
     grid.innerHTML = products.slice(0, 8).map(product => `
       <article class="product-card glass-panel">
-        ${getProductImage(product) ? `<img src="${getProductImage(product)}" alt="${product.name || product.title || 'Rockstok merch'}">` : `<div class="placeholder-product"><img src="assets/rockstok-logo.jpg" alt="Rockstok logo" /></div>`}
+        ${getProductImage(product) ? `<img src="${getProductImage(product)}" alt="${product.name || product.title || 'Rockstok merch'}">` : `<div class="placeholder-product"><img src="assets/logo.png" alt="Rockstok logo" /></div>`}
         <div class="product-info">
           <h3>${product.name || product.title || 'Rockstok Merch'}</h3>
           <span class="price">${getProductPrice(product)}</span>
@@ -152,54 +184,72 @@ async function loadFourthwallProducts() {
       </article>`).join('');
   } catch (err) {
     console.warn(err);
-    notice.textContent = 'Could not load Fourthwall merch yet. Check the Storefront token, collection handle and shop URL.';
+    // Keep this visitor-facing; setup/debug details belong in README.md.
+    notice.textContent = 'Merch is warming up. Use the full shop link or ask the band what is available.';
     renderFallbackProducts();
   }
 }
 
 function renderFallbackProducts() {
   const fallback = [
-    { title: 'Rockstok Tee', price: 'Coming soon', note: 'Classic band tee placeholder' },
-    { title: 'Logo Hoodie', price: 'Coming soon', note: 'Fourthwall merch will replace this card' },
-    { title: 'Sticker Pack', price: 'Coming soon', note: 'Small merch item or bundle slot' }
+    { title: 'Rockstok Tee', price: 'Coming soon', note: 'Classic tee for loud nights and late choruses.' },
+    { title: 'Logo Hoodie', price: 'Coming soon', note: 'Warm gear with the Rockstok mark up front.' },
+    { title: 'Sticker Pack', price: 'Coming soon', note: 'Small, loud, and ready for guitar cases.' }
   ];
 
   $('#productGrid').innerHTML = fallback.map(item => `
     <article class="product-card glass-panel">
       <div class="placeholder-product">
-        <img src="assets/rockstok-logo.jpg" alt="Rockstok logo" />
+        <img src="assets/logo.png" alt="Rockstok logo" />
       </div>
       <div class="product-info">
         <h3>${item.title}</h3>
         <span class="price">${item.price}</span>
         <p>${item.note}</p>
-        <a class="button ghost" href="#bookings">Ask about merch</a>
+        <a class="button ghost" href="booking.html">Ask about merch</a>
       </div>
     </article>`).join('');
 }
 
 function setupBookingForm() {
-  $('#bookingForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const subject = encodeURIComponent('Rockstok Covers booking enquiry');
-    const body = encodeURIComponent(
-      `Name: ${form.get('name')}\n` +
-      `Event date: ${form.get('date') || 'TBC'}\n` +
-      `Venue / Location: ${form.get('venue') || 'TBC'}\n` +
-      `Event type: ${form.get('eventType') || 'TBC'}\n\n` +
-      `${form.get('message')}`
-    );
-    window.location.href = `mailto:${cfg.bookingEmail}?subject=${subject}&body=${body}`;
+  document.querySelectorAll('.booking-form').forEach((formEl) => {
+    formEl.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const subject = encodeURIComponent('Rockstok booking enquiry');
+      const body = encodeURIComponent(
+        `Name: ${form.get('name')}\n` +
+        `Event date: ${form.get('date') || 'TBC'}\n` +
+        `Venue / Suburb / City: ${form.get('venue') || 'TBC'}\n` +
+        `Phone / Email: ${form.get('contact') || 'TBC'}\n` +
+        `Event type: ${form.get('eventType') || 'TBC'}\n\n` +
+        `Extra notes:\n${form.get('notes') || 'None provided'}`
+      );
+      window.location.href = `mailto:${cfg.bookingEmail}?subject=${subject}&body=${body}`;
+    });
   });
 }
 
 function setupNav() {
   const toggle = $('.nav-toggle');
   const links = $('#nav-links');
+  if (!toggle || !links) return;
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(open));
+  });
+}
+
+function setupReadMore() {
+  document.querySelectorAll('[data-collapsible-copy]').forEach((block) => {
+    const button = block.querySelector('.read-more-toggle');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+      const expanded = block.classList.toggle('expanded');
+      button.setAttribute('aria-expanded', String(expanded));
+      button.textContent = expanded ? 'Show less' : 'Read more...';
+    });
   });
 }
 
@@ -209,3 +259,4 @@ renderBand();
 loadFourthwallProducts();
 setupBookingForm();
 setupNav();
+setupReadMore();
