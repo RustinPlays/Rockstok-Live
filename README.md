@@ -12,7 +12,7 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `band.html`: standalone Band tab.
 - `booking.html`: dedicated booking page linked from the main navigation.
 - `styles.css`: colours, spacing, typography and responsive layout.
-- `config.js`: fallback/default site data for gigs, plus setlist tags, band members, shop settings and booking email.
+- `config.js`: editable site data for gigs, setlist tags, band members, shop settings and booking email.
 - `app.js`: renders gigs, band members, merch cards, mobile menu and booking email behaviour.
 - `assets/`: logo and band photos used by the website.
 
@@ -37,9 +37,7 @@ Keep the image path exactly matched to the filename in `assets/`.
 
 ## Add Public Gigs
 
-Use the hidden admin page to create, edit, or delete events. The admin form asks for confirmation, then saves the event list into the browser event store. Public gig sections read that saved list first.
-
-If no browser-saved event list exists yet, the website falls back to the `gigs` array in `config.js`.
+Edit the `gigs` array in `config.js`.
 
 Example:
 
@@ -56,11 +54,11 @@ gigs: [
 ]
 ```
 
-Use the date format `YYYY-MM-DD`. Leave `ticketUrl` empty if there is no ticket link.
+Use the date format `DD-MM=-YYYY`. Leave `ticketUrl` empty if there is no ticket link.
 
-Public gig listings automatically hide events one day after the event date. Expired gigs remain visible in the admin page under Expired Events.
+Public gig listings automatically hide events one day after the event date. Because this is a static website, the old gig is not physically deleted from `config.js`; remove old entries manually when you next edit the file.
 
-Because this is a static website, browser admin saves do not physically rewrite `config.js` on disk and do not publish new gigs to every visitor's browser. For all-visitor admin editing, the site needs a small backend, hosted database, or admin/form service.
+The admin page separates visible events from expired events. It can generate a clean active `gigs` array for copying into `config.js`, but it cannot save file changes by itself on static hosting.
 
 ## Booking Form
 
