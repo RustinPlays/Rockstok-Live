@@ -739,3 +739,13 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .site-footer { padding: 24px 0; }
   .footer-links { margin-top: 16px; gap: 12px; }
 }
+.form-status {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.booking-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
