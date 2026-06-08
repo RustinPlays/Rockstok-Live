@@ -5,11 +5,15 @@ window.ROCKSTOK_CONFIG = {
   FOURTHWALL_COLLECTION_HANDLE: "all",
 
   // Keep this as the shop domain only. Do not include /collections/all here.
-  FOURTHWALL_SHOP_DOMAIN: "rockstok.live",
+  FOURTHWALL_SHOP_DOMAIN: "rockstok-shop.fourthwall.com",
 
   // Base URL used for product and full shop links.
-  FOURTHWALL_SHOP_BASE_URL: "https://rockstok.live/en-nzd",
+  FOURTHWALL_SHOP_BASE_URL: "https://rockstok-shop.fourthwall.com/en-nzd",
   DEFAULT_CURRENCY: "NZD",
+
+  // Optional: add a Google Maps browser API key with Maps JavaScript API and Places enabled
+  // to turn the backstage map address field into Google-style address suggestions.
+  GOOGLE_MAPS_BROWSER_API_KEY: "",
 
   // Testing address. Change this to rockstokcovers@gmail.com when ready.
   bookingEmail: "Justin.oshea135@gmail.com",
@@ -57,6 +61,12 @@ window.ROCKSTOK_CONFIG = {
       role: "Drums",
       bio: "Keeps the engine roaring and the dance floor honest.",
       image: "assets/Kuzma.png"
+    },
+    {
+      name: "Justin O'Shea",
+      role: "Sound and Lighting Technician",
+      bio: "Runs the sound, lighting and live-show production details.",
+      image: "assets/Justin.png"
     }
   ]
 };

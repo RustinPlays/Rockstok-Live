@@ -49,6 +49,23 @@ function isGigVisible(gig) {
   return expiry >= new Date();
 }
 
+function getMapAddress(gig) {
+  return (gig.mapAddress || [gig.venue, gig.location].filter(Boolean).join(', ')).trim();
+}
+
+function getGoogleMapsUrl(address, placeId = '') {
+  const params = new URLSearchParams({
+    api: '1',
+    query: address
+  });
+
+  if (placeId) {
+    params.set('query_place_id', placeId);
+  }
+
+  return `https://www.google.com/maps/search/?${params.toString()}`;
+}
+
 function renderGigs() {
   const list = $('#gigList');
   if (!list) return;
@@ -77,12 +94,14 @@ function renderGigs() {
     const d = formatDate(gig.date);
     const href = gig.ticketUrl || 'booking.html';
     const buttonText = gig.ticketUrl ? 'Details / Tickets' : 'Enquire';
+    const mapAddress = getMapAddress(gig);
     return `
       <article class="gig-card glass-panel">
         <div class="gig-date"><span>${d ? d.month : 'TBC'}</span><strong>${d ? d.day : '--'}</strong></div>
         <div>
           <h3>${gig.title}</h3>
           <p class="gig-meta">${d ? d.full : 'Date TBC'} - ${gig.time || 'Time TBC'} - ${gig.venue || 'Venue TBC'}${gig.location ? ` - ${gig.location}` : ''}</p>
+          ${mapAddress ? `<a class="gig-map-link" href="${getGoogleMapsUrl(mapAddress, gig.mapPlaceId)}" target="_blank" rel="noopener"><span class="map-pin-icon" aria-hidden="true"></span><span>${mapAddress}</span></a>` : ''}
         </div>
         <a class="button ghost" href="${href}" ${gig.ticketUrl ? 'target="_blank" rel="noopener"' : ''}>${buttonText}</a>
       </article>`;
@@ -137,7 +156,7 @@ function productUrl(product) {
   const base = cleanBaseUrl();
   if (product?.url) return product.url;
   if (base && product?.slug) return `${base}/products/${product.slug}`;
-  return base ? `${base}/collections/${cfg.FOURTHWALL_COLLECTION_HANDLE || 'all'}` : '#';
+  return base || '#';
 }
 
 async function loadFourthwallProducts() {
@@ -148,7 +167,7 @@ async function loadFourthwallProducts() {
   const base = cleanBaseUrl();
 
   if (base) {
-    shopButton.href = `${base}/collections/${cfg.FOURTHWALL_COLLECTION_HANDLE || 'all'}`;
+    shopButton.href = base;
   } else {
     shopButton.style.display = 'none';
   }
@@ -212,19 +231,61 @@ function renderFallbackProducts() {
 }
 
 function setupBookingForm() {
-  document.querySelectorAll('.booking-form').forEach((formEl) => {
+  document.querySelectorAll('form[data-ajax-form]').forEach((formEl) => {
+    formEl.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const status = formEl.querySelector('.form-status');
+      const submitButton = formEl.querySelector('button[type="submit"]');
+      const sendingMessage = formEl.dataset.sendingMessage || 'Sending...';
+      const successMessage = formEl.dataset.successMessage || 'Thanks, your message has been sent.';
+      const errorMessage = formEl.dataset.errorMessage || 'Sorry, something went wrong. Please try again.';
+
+      if (status) status.textContent = sendingMessage;
+      if (submitButton) submitButton.disabled = true;
+
+      try {
+        const response = await fetch(formEl.action, {
+          method: formEl.method || 'POST',
+          body: new FormData(formEl),
+          headers: {
+            Accept: 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Form returned ${response.status}`);
+        }
+
+        if (status) status.textContent = successMessage;
+        formEl.reset();
+      } catch (error) {
+        console.warn(error);
+        if (status) status.textContent = errorMessage;
+      }
+
+      if (submitButton) submitButton.disabled = false;
+    });
+  });
+
+  // Old fallback mailto booking handler.
+  // Only runs on forms that explicitly opt in with data-mailto-booking.
+  // This prevents app.js from interfering with the Formspree booking form or the Firebase admin gig form.
+  document.querySelectorAll('form[data-mailto-booking]').forEach((formEl) => {
     formEl.addEventListener('submit', (event) => {
       event.preventDefault();
+
       const form = new FormData(event.currentTarget);
       const subject = encodeURIComponent('Rockstok booking enquiry');
       const body = encodeURIComponent(
         `Name: ${form.get('name')}\n` +
         `Event date: ${form.get('date') || 'TBC'}\n` +
         `Venue / Suburb / City: ${form.get('venue') || 'TBC'}\n` +
-        `Phone / Email: ${form.get('contact') || 'TBC'}\n` +
-        `Event type: ${form.get('eventType') || 'TBC'}\n\n` +
-        `Extra notes:\n${form.get('notes') || 'None provided'}`
+        `Phone / Email: ${form.get('contact') || form.get('phone') || form.get('email') || 'TBC'}\n` +
+        `Event type: ${form.get('eventType') || form.get('event_type') || 'TBC'}\n\n` +
+        `Extra notes:\n${form.get('notes') || form.get('message') || 'None provided'}`
       );
+
       window.location.href = `mailto:${cfg.bookingEmail}?subject=${subject}&body=${body}`;
     });
   });

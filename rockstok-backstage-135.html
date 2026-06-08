@@ -4,387 +4,172 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>Rockstok Admin Page</title>
+  <title>Rockstok Backstage Admin</title>
+  <meta name="description" content="Private Rockstok admin page for managing upcoming gigs." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="apple-touch-icon" href="assets/logo.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div class="smoke-bg smoke-a"></div>
   <div class="smoke-bg smoke-b"></div>
 
-  <main>
-    <section class="section wrap page-section admin-section">
-      <div class="admin-heading">
+  <header class="site-header" id="top">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="Backstage top">
         <img class="brand-logo" src="assets/logo.png" alt="Rockstok logo" />
-        <p class="eyebrow">Rockstok Admin</p>
-        <h1>Admin Page</h1>
-        <p>This page is password-gated and not listed in the public navigation.</p>
+        <span>Backstage</span>
+      </a>
+
+      <div class="nav-links admin-nav-links">
+        <a href="index.html">Home</a>
+        <a class="admin-session-link" href="#make-event" hidden>Make Event</a>
+        <a class="admin-session-link" href="#event-list" hidden>Event List</a>
+        <a class="admin-session-link" href="#publishing" hidden>Publishing</a>
+        <button id="logout-button" class="admin-nav-button admin-session-link" type="button" hidden>Log Out</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section wrap booking-page-section admin-page-section">
+      <div class="booking-copy admin-intro">
+        <p class="eyebrow admin-backstage-word">Backstage</p>
+        <h1>Rockstok Gig Admin</h1>
+        <p>Log in to add upcoming gigs. Public gigs will automatically appear on the live website.</p>
       </div>
 
-      <form class="booking-card glass-panel admin-login" id="adminLogin">
-        <label>
-          Password
-          <input name="password" type="password" autocomplete="current-password" placeholder="Enter password" required />
-        </label>
-        <button class="button primary" type="submit">Enter Admin</button>
-        <p class="notice" id="adminNotice"></p>
-      </form>
+      <section id="login-panel" class="booking-card glass-panel booking-form admin-login-panel">
+        <h2>Admin Login</h2>
 
-      <div class="admin-panel" id="adminPanel" hidden>
-        <div class="admin-tabs" role="tablist" aria-label="Admin sections">
-          <button class="admin-tab active" type="button" data-admin-tab="events">Events</button>
-          <button class="admin-tab" type="button" data-admin-tab="expired">Expired Events</button>
-          <button class="admin-tab" type="button" data-admin-tab="content">Content</button>
-          <button class="admin-tab" type="button" data-admin-tab="band">Band</button>
-          <button class="admin-tab" type="button" data-admin-tab="merch">Merch</button>
-          <button class="admin-tab" type="button" data-admin-tab="settings">Settings</button>
-          <button class="admin-tab" type="button" data-admin-tab="notes">Notes</button>
+        <form id="admin-login-form">
+          <label>
+            Email
+            <input id="admin-email" type="email" placeholder="Email address" autocomplete="username" required />
+          </label>
+
+          <label>
+            Password
+            <input id="admin-password" type="password" placeholder="Password" autocomplete="current-password" required />
+          </label>
+
+          <button id="login-button" class="button primary" type="submit">Log In</button>
+
+          <p id="login-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="admin-panel" class="admin-panel" hidden>
+        <div class="admin-topbar">
+          <div>
+            <p class="eyebrow">Logged in</p>
+            <h2>Event Manager</h2>
+          </div>
         </div>
 
-        <section class="admin-tab-panel active" data-admin-panel="events">
-          <div class="admin-grid">
-            <article class="glass-panel admin-card admin-wide">
-              <p class="eyebrow">Events</p>
-              <h2>Create or edit gigs</h2>
-              <p>Create or edit gigs here. You will be asked to confirm before the event list updates.</p>
+        <div class="admin-dashboard">
+          <section id="make-event" class="admin-card glass-panel booking-form">
+            <div class="admin-card-heading">
+              <p class="eyebrow">Make event</p>
+              <h3>Create a new public gig</h3>
+              <p>Add the details once here. Public events show on the live website.</p>
+            </div>
 
-              <div class="admin-split">
-                <div>
-                  <h3>Visible online</h3>
-                  <div class="admin-event-list" id="adminActiveGigList"></div>
-                </div>
-                <div>
-                  <h3>Edit / create event</h3>
-                  <form class="admin-mini-form" id="gigBuilder">
-                    <input name="date" type="date" aria-label="Gig date" required />
-                    <input name="title" placeholder="Title, e.g. Rockstok Live" aria-label="Gig title" required />
-                    <input name="venue" placeholder="Venue" aria-label="Venue" required />
-                    <input name="location" placeholder="Suburb / city" aria-label="Location" />
-                    <input name="time" placeholder="Time, e.g. 8:00 PM" aria-label="Time" />
-                    <input name="ticketUrl" placeholder="Ticket URL, if any" aria-label="Ticket URL" />
-                    <button class="button ghost" type="submit">Save Event</button>
-                    <button class="button ghost" type="button" id="clearGigBuilder">Clear Form</button>
-                  </form>
-                  <p class="notice" id="eventSaveNotice"></p>
-                </div>
+            <form id="gig-form" class="admin-event-form">
+              <label>
+                Gig title
+                <input id="gig-title" type="text" placeholder="Rockstok Live at..." required />
+              </label>
+
+              <div class="admin-form-row">
+                <label>
+                  Date
+                  <input id="gig-date" type="date" required />
+                </label>
+
+                <label>
+                  Time
+                  <input id="gig-time" type="text" placeholder="8:00 PM" />
+                </label>
               </div>
 
-              <h3>Saved active events</h3>
-              <p>The public website reads this saved list first, then falls back to <code>config.js</code> if nothing has been saved yet.</p>
-              <textarea class="admin-output" id="activeGigsOutput" rows="10" readonly placeholder="Saved active gigs will appear here."></textarea>
-            </article>
-          </div>
-        </section>
+              <label>
+                Venue
+                <input id="gig-venue" type="text" placeholder="Venue name" />
+              </label>
 
-        <section class="admin-tab-panel" data-admin-panel="expired" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card admin-wide">
-              <p class="eyebrow">Expired events</p>
-              <h2>Auto-hidden gigs</h2>
-              <p>These gigs are no longer shown on the public website because they are more than one day past the event date. They remain here for review.</p>
-              <div class="admin-event-list" id="adminExpiredGigList"></div>
-              <h3>Saved event data</h3>
-              <textarea class="admin-output" id="cleanGigsOutput" rows="10" readonly placeholder="Saved event data will appear here."></textarea>
-            </article>
-          </div>
-        </section>
+              <label>
+                Location
+                <input id="gig-location" type="text" placeholder="Suburb / City" />
+              </label>
 
-        <section class="admin-tab-panel" data-admin-panel="content" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Main copy</p>
-              <h2>Website text</h2>
-              <p>Edit public page text directly in the matching HTML file.</p>
-              <p><code>index.html</code> keeps the full one-page version.</p>
-              <p><code>about.html</code>, <code>music.html</code>, <code>band.html</code>, <code>gigs.html</code>, <code>merch.html</code>, and <code>booking.html</code> are the standalone tabs.</p>
-            </article>
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Setlist tags</p>
-              <h2>Music bubbles</h2>
-              <p>Update <code>songTags</code> in <code>config.js</code>. These render in the music/set style bubble section.</p>
-              <textarea class="admin-output" id="songTagsOutput" rows="9" readonly></textarea>
-            </article>
-          </div>
-        </section>
+              <label>
+                Google Maps pin address
+                <input id="gig-map-address" type="text" placeholder="Street address or venue address" />
+              </label>
+              <input id="gig-map-place-id" type="hidden" />
 
-        <section class="admin-tab-panel" data-admin-panel="band" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card admin-wide">
-              <p class="eyebrow">Band</p>
-              <h2>Current member data</h2>
-              <p>Member cards come from the <code>band</code> array in <code>config.js</code>.</p>
-              <textarea class="admin-output" id="bandOutput" rows="14" readonly></textarea>
-            </article>
-          </div>
-        </section>
+              <a id="gig-map-preview" class="button ghost admin-map-preview" href="https://www.google.com/maps" target="_blank" rel="noopener">Check Pin in Google Maps</a>
 
-        <section class="admin-tab-panel" data-admin-panel="merch" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Merch</p>
-              <h2>Fourthwall settings</h2>
-              <p>Merch cards load from Fourthwall using the Storefront API settings in <code>config.js</code>.</p>
-              <p><code>FOURTHWALL_COLLECTION_HANDLE</code>: <span id="adminCollectionHandle"></span></p>
-              <p><code>FOURTHWALL_SHOP_BASE_URL</code>: <span id="adminShopUrl"></span></p>
-            </article>
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Shop</p>
-              <h2>Open store</h2>
-              <p>Use this to check the live Fourthwall shop.</p>
-              <a class="button ghost" id="adminShopLink" href="#" target="_blank" rel="noopener">Open Shop</a>
-            </article>
-          </div>
-        </section>
+              <label>
+                Ticket / info link
+                <input id="gig-ticket-link" type="url" placeholder="https://..." />
+              </label>
 
-        <section class="admin-tab-panel" data-admin-panel="settings" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Current setup</p>
-              <h2>Booking email</h2>
-              <p id="adminBookingEmail">Loading...</p>
-              <p>Change this in <code>config.js</code> under <code>bookingEmail</code>.</p>
-            </article>
-            <article class="glass-panel admin-card">
-              <p class="eyebrow">Quick files</p>
-              <h2>Where to edit</h2>
-              <p>The Events tab saves gigs into the browser event store. <code>config.js</code> is now the fallback gig list if no saved event list exists yet.</p>
-              <p><code>config.js</code> still controls band members, booking email, setlist tags and merch settings.</p>
-              <p><code>styles.css</code> controls layout, colour, spacing and responsive behaviour.</p>
-              <p><code>README.md</code> has maintenance notes.</p>
-            </article>
-          </div>
-        </section>
+              <label>
+                Description
+                <textarea id="gig-description" rows="5" placeholder="Short public description..."></textarea>
+              </label>
 
-        <section class="admin-tab-panel" data-admin-panel="notes" hidden>
-          <div class="admin-grid">
-            <article class="glass-panel admin-card admin-wide">
-              <p class="eyebrow">Security note</p>
-              <h2>Static-site limitation</h2>
-              <p>This page is hidden by filename and password-gated in the browser. It is useful for admin helpers and casual privacy, but it is not true server-side security.</p>
-              <p>Event saves use browser storage, so they update this browser automatically. For edits that update every visitor, use a backend, protected hosting, or a form/admin service with server-side login.</p>
-            </article>
-          </div>
-        </section>
-      </div>
+              <label>
+                Show on live website
+                <select id="gig-public">
+                  <option value="true">Yes, show publicly</option>
+                  <option value="false">No, save as hidden</option>
+                </select>
+              </label>
+
+              <button class="button primary" type="submit">Save Event</button>
+              <p id="gig-form-status" class="form-status" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section id="event-list" class="admin-card glass-panel admin-list-section">
+            <div class="admin-card-heading">
+              <p class="eyebrow">Event list</p>
+              <h3>Saved events</h3>
+              <p>These are the events currently saved in Firebase.</p>
+            </div>
+
+            <div id="admin-event-summary" class="admin-event-summary" aria-live="polite">
+              <span>Loading events...</span>
+            </div>
+
+            <div id="admin-gigs-list" class="admin-gigs-list">
+              <p>Loading saved events...</p>
+            </div>
+          </section>
+
+          <section id="publishing" class="admin-card glass-panel admin-publish-section">
+            <div class="admin-card-heading">
+              <p class="eyebrow">Publishing</p>
+              <h3>Website checks</h3>
+              <p>Use these links after saving an event to confirm it is showing in both public places.</p>
+            </div>
+
+            <div class="admin-check-list">
+              <span>Public events appear on the live website after saving. Use <a href="index.html#gigs" target="_blank" rel="noopener">Home</a> to check them.</span>
+              <span>Hidden events stay in admin only.</span>
+              <span>Past events automatically stop showing one day after the event date.</span>
+            </div>
+          </section>
+        </div>
+      </section>
     </section>
   </main>
 
-  <a class="admin-home-button" href="index.html">Back to Main Website</a>
-
   <script src="config.js"></script>
-  <script>
-    const ADMIN_HASH = '6f3e429d0e93aa567348f5901a4f67f3b5f78f44829d2c340a5c46992b83ac53';
-    const SESSION_KEY = 'rockstokBackstageAccess';
-    const GIG_STORE_KEY = 'rockstokAdminGigs';
-    let selectedGigIndex = null;
-
-    async function sha256(value) {
-      const bytes = new TextEncoder().encode(value);
-      const hash = await crypto.subtle.digest('SHA-256', bytes);
-      return Array.from(new Uint8Array(hash)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
-    }
-
-    function readStoredGigs() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(GIG_STORE_KEY) || 'null');
-        return Array.isArray(stored) ? stored : null;
-      } catch {
-        return null;
-      }
-    }
-
-    function writeStoredGigs(gigs) {
-      try {
-        localStorage.setItem(GIG_STORE_KEY, JSON.stringify(gigs));
-        return true;
-      } catch {
-        return false;
-      }
-    }
-
-    function getGigs() {
-      return readStoredGigs() || window.ROCKSTOK_CONFIG?.gigs || [];
-    }
-
-    function setEventNotice(message) {
-      const notice = document.getElementById('eventSaveNotice');
-      if (notice) notice.textContent = message;
-    }
-
-    function formatAdminDate(dateString) {
-      const date = new Date(`${dateString}T12:00:00`);
-      if (Number.isNaN(date.getTime())) return 'Date TBC';
-      return date.toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function isAdminGigVisible(gig) {
-      if (!gig?.date) return false;
-      const expiry = new Date(`${gig.date}T23:59:59`);
-      if (Number.isNaN(expiry.getTime())) return false;
-      expiry.setDate(expiry.getDate() + 1);
-      return expiry >= new Date();
-    }
-
-    function buildGigFromForm() {
-      const form = new FormData(document.getElementById('gigBuilder'));
-      return {
-        date: form.get('date') || '',
-        title: form.get('title') || '',
-        venue: form.get('venue') || '',
-        location: form.get('location') || '',
-        time: form.get('time') || '',
-        ticketUrl: form.get('ticketUrl') || ''
-      };
-    }
-
-    function fillGigForm(gig, index) {
-      const form = document.getElementById('gigBuilder');
-      selectedGigIndex = index;
-      form.date.value = gig.date || '';
-      form.title.value = gig.title || '';
-      form.venue.value = gig.venue || '';
-      form.location.value = gig.location || '';
-      form.time.value = gig.time || '';
-      form.ticketUrl.value = gig.ticketUrl || '';
-      setEventNotice(`Editing: ${gig.title || 'Rockstok Live'}`);
-      document.querySelector('[data-admin-tab="events"]').click();
-    }
-
-    function renderGigRows(gigs, expired) {
-      if (!gigs.length) {
-        return `<p class="notice">${expired ? 'No expired gigs.' : 'No active gigs listed.'}</p>`;
-      }
-
-      return gigs.map(({ gig, index }) => `
-        <article class="admin-event-row ${expired ? 'expired' : ''}">
-          <div>
-            <strong>${gig.title || 'Rockstok Live'}</strong>
-            <span>${formatAdminDate(gig.date)} - ${gig.time || 'Time TBC'} - ${gig.venue || 'Venue TBC'}${gig.location ? ` - ${gig.location}` : ''}</span>
-          </div>
-          <div class="admin-event-actions">
-            <em>${expired ? 'Expired' : 'Visible online'}</em>
-            <button class="button ghost small" type="button" data-edit-gig="${index}">Edit</button>
-            <button class="button ghost small" type="button" data-delete-gig="${index}">Delete</button>
-          </div>
-        </article>`).join('');
-    }
-
-    function renderAdminGigs() {
-      const gigs = getGigs();
-      const indexed = gigs.map((gig, index) => ({ gig, index }));
-      const active = indexed.filter(({ gig }) => isAdminGigVisible(gig));
-      const expired = indexed.filter(({ gig }) => !isAdminGigVisible(gig));
-      const activeGigs = active.map(({ gig }) => gig);
-
-      document.getElementById('adminActiveGigList').innerHTML = renderGigRows(active, false);
-      document.getElementById('adminExpiredGigList').innerHTML = renderGigRows(expired, true);
-      document.getElementById('activeGigsOutput').value = JSON.stringify(activeGigs, null, 2);
-      document.getElementById('cleanGigsOutput').value = JSON.stringify(gigs, null, 2);
-
-      document.querySelectorAll('[data-edit-gig]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const index = Number(button.dataset.editGig);
-          fillGigForm(gigs[index], index);
-        });
-      });
-
-      document.querySelectorAll('[data-delete-gig]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const index = Number(button.dataset.deleteGig);
-          const gig = gigs[index];
-          if (!confirm(`Are you sure you want to delete "${gig?.title || 'this event'}"?`)) return;
-          const updated = gigs.filter((_, gigIndex) => gigIndex !== index);
-          if (!writeStoredGigs(updated)) {
-            setEventNotice('Could not save changes. Browser storage is unavailable.');
-            return;
-          }
-          if (selectedGigIndex === index) {
-            selectedGigIndex = null;
-            document.getElementById('gigBuilder').reset();
-          } else if (selectedGigIndex > index) {
-            selectedGigIndex -= 1;
-          }
-          setEventNotice('Event deleted.');
-          renderAdminGigs();
-        });
-      });
-    }
-
-    function renderAdminData() {
-      const cfg = window.ROCKSTOK_CONFIG || {};
-      document.getElementById('adminBookingEmail').textContent = cfg.bookingEmail || 'Not set';
-      document.getElementById('songTagsOutput').value = `songTags: ${JSON.stringify(cfg.songTags || [], null, 2)}`;
-      document.getElementById('bandOutput').value = `band: ${JSON.stringify(cfg.band || [], null, 2)}`;
-      document.getElementById('adminCollectionHandle').textContent = cfg.FOURTHWALL_COLLECTION_HANDLE || 'Not set';
-      document.getElementById('adminShopUrl').textContent = cfg.FOURTHWALL_SHOP_BASE_URL || 'Not set';
-      document.getElementById('adminShopLink').href = cfg.FOURTHWALL_SHOP_BASE_URL || '#';
-      renderAdminGigs();
-    }
-
-    function showAdmin() {
-      document.getElementById('adminLogin').hidden = true;
-      document.getElementById('adminPanel').hidden = false;
-      renderAdminData();
-    }
-
-    document.getElementById('adminLogin').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const password = new FormData(event.currentTarget).get('password');
-      const notice = document.getElementById('adminNotice');
-      if (await sha256(password) === ADMIN_HASH) {
-        sessionStorage.setItem(SESSION_KEY, '1');
-        showAdmin();
-      } else {
-        notice.textContent = 'Incorrect password.';
-      }
-    });
-
-    document.querySelectorAll('[data-admin-tab]').forEach((tab) => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('[data-admin-tab]').forEach((item) => item.classList.remove('active'));
-        document.querySelectorAll('[data-admin-panel]').forEach((panel) => {
-          panel.classList.remove('active');
-          panel.hidden = true;
-        });
-        tab.classList.add('active');
-        const panel = document.querySelector(`[data-admin-panel="${tab.dataset.adminTab}"]`);
-        panel.hidden = false;
-        panel.classList.add('active');
-      });
-    });
-
-    document.getElementById('gigBuilder').addEventListener('submit', (event) => {
-      event.preventDefault();
-      const gigs = [...getGigs()];
-      const entry = buildGigFromForm();
-      const action = selectedGigIndex === null ? 'create this event' : 'update this event';
-      if (!confirm(`Are you sure you want to ${action}?`)) return;
-      if (selectedGigIndex === null) {
-        gigs.push(entry);
-      } else {
-        gigs[selectedGigIndex] = entry;
-      }
-      gigs.sort((a, b) => new Date(a.date) - new Date(b.date));
-      if (!writeStoredGigs(gigs)) {
-        setEventNotice('Could not save event. Browser storage is unavailable.');
-        return;
-      }
-      selectedGigIndex = null;
-      event.currentTarget.reset();
-      setEventNotice('Event list saved. Refresh the public page to see the update if it is already open.');
-      renderAdminGigs();
-    });
-
-    document.getElementById('clearGigBuilder').addEventListener('click', () => {
-      selectedGigIndex = null;
-      document.getElementById('gigBuilder').reset();
-      setEventNotice('');
-    });
-
-    if (sessionStorage.getItem(SESSION_KEY) === '1') {
-      showAdmin();
-    }
-  </script>
+  <script type="module" src="admin-gigs.js"></script>
 </body>
 </html>

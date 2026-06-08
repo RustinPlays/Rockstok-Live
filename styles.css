@@ -346,6 +346,24 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 .empty-card { padding: 28px; display: grid; gap: 12px; justify-items: start; }
 .empty-card p { color: var(--muted); line-height: 1.7; max-width: 680px; }
 
+.service-bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 18px);
+}
+
+.service-bubble {
+  min-height: 92px;
+  display: grid;
+  align-items: center;
+  padding: clamp(18px, 2.4vw, 26px);
+}
+
+.service-bubble h3 {
+  font-size: clamp(1.35rem, 2.8vw, 2.45rem);
+  line-height: 1;
+}
+
 .services-section, .merch-section {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -456,30 +474,29 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 
 .backstage-link {
   position: fixed;
-  right: 14px;
-  bottom: 14px;
+  left: 0;
+  bottom: 0;
   z-index: 40;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(157, 230, 255, 0.22);
-  border-radius: 50%;
-  background: rgba(3, 13, 20, .58);
-  opacity: .22;
-  transition: opacity .2s ease, transform .2s ease, border-color .2s ease;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: default;
 }
 .backstage-link:hover,
 .backstage-link:focus-visible {
-  opacity: 1;
-  transform: translateY(-2px);
-  border-color: rgba(126,234,255,.6);
+  opacity: .02;
+  outline: 0;
 }
 .backstage-link img {
-  width: 22px;
-  height: 22px;
+  width: 1px;
+  height: 1px;
   object-fit: cover;
-  border-radius: 50%;
+  opacity: 0;
 }
 
 .admin-section {
@@ -657,7 +674,7 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .page-section { padding-top: 58px; }
   .section-heading, .footer-grid { display: block; }
   .section-heading p { margin-top: 12px; }
-  .services-grid, .product-grid, .band-grid { grid-template-columns: 1fr; }
+  .services-grid, .product-grid, .band-grid, .service-bubble-grid { grid-template-columns: 1fr; }
   .admin-grid, .admin-mini-form, .admin-split { grid-template-columns: 1fr; }
   .admin-event-row { display: grid; }
   .admin-event-actions { justify-items: start; }
@@ -748,4 +765,285 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 .booking-form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Admin/live gig fixes */
+[hidden] {
+  display: none !important;
+}
+
+.admin-login-panel form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-panel[hidden] {
+  display: none !important;
+}
+
+.admin-gigs-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-gig-card {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-gig-card .button {
+  margin-top: 8px;
+  justify-self: start;
+}
+
+.form-status {
+  min-height: 1.4em;
+}
+
+.admin-intro {
+  max-width: 780px;
+  position: static;
+}
+
+.admin-page-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(22px, 3vw, 34px);
+  padding-top: clamp(72px, 8vw, 108px);
+}
+
+.admin-page-section .admin-backstage-word {
+  font-size: clamp(.9rem, 1.2vw, 1.1rem);
+  line-height: 1.1;
+  margin-bottom: 12px;
+  opacity: var(--backstage-word-opacity, 1);
+  transition: opacity .16s linear;
+  text-transform: uppercase;
+}
+
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-nav-links {
+  align-items: center;
+}
+
+.admin-nav-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin-nav-button:hover,
+.admin-nav-button:focus-visible {
+  color: var(--accent-3);
+}
+
+.admin-topbar h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.admin-dashboard {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-page-section .admin-login-panel,
+.admin-page-section .admin-panel {
+  width: 100%;
+}
+
+.admin-card-heading {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.admin-card-heading .eyebrow,
+.admin-topbar .eyebrow {
+  font-size: .82rem;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.admin-card-heading h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+}
+
+.admin-card-heading p {
+  margin: 0;
+}
+
+.admin-event-form,
+.admin-form-row {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-form-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-event-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.admin-event-summary span,
+.admin-check-list span {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  color: var(--muted);
+  padding: 12px;
+  line-height: 1.45;
+}
+
+.admin-event-summary strong {
+  color: var(--accent-3);
+}
+
+.admin-list-section,
+.admin-publish-section {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-gig-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.admin-gig-card-main {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-gig-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-status {
+  border-radius: 999px;
+  display: inline-flex;
+  padding: 4px 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.admin-status.is-live {
+  background: rgba(75, 214, 146, .14);
+  color: #7df0b6;
+}
+
+.admin-status.is-hidden {
+  background: rgba(255,255,255,.08);
+  color: var(--muted);
+}
+
+.admin-status.is-expired {
+  background: rgba(255, 196, 87, .14);
+  color: #ffd38d;
+}
+
+.admin-check-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-check-list a {
+  color: var(--accent-3);
+  font-weight: 900;
+}
+
+.admin-map-preview {
+  justify-self: start;
+}
+
+.admin-map-preview.is-disabled {
+  opacity: .55;
+}
+
+.pac-container {
+  z-index: 10000;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--font-rockstock);
+}
+
+.gig-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 8px;
+  color: var(--accent-3);
+  font-size: .95rem;
+  line-height: 1.35;
+}
+
+.gig-map-link span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.map-pin-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent-3);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+
+.map-pin-icon::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--accent-3);
+}
+
+@media (max-width: 980px) {
+  .admin-intro {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-topbar,
+  .admin-gig-card {
+    display: grid;
+  }
+
+  .admin-form-row,
+  .admin-event-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-gig-actions {
+    justify-content: flex-start;
+  }
 }
