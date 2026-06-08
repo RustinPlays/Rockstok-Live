@@ -1,10 +1,10 @@
 # Rockstok Website Notes
 
-This is a static website for Rockstok. It can be opened directly from `home.html` or uploaded to any static host.
+This is a static website for Rockstok. It can be opened directly from `index.html` or uploaded to any static host.
 
 ## What Each File Does
 
-- `home.html`: main page layout and public page copy.
+- `index.html`: main page layout and public page copy.
 - `about.html`: About tab, including Services and Music sections.
 - `gigs.html`: standalone Gigs tab.
 - `music.html`: redirect to `about.html#music` for old links.
@@ -15,7 +15,7 @@ This is a static website for Rockstok. It can be opened directly from `home.html
 - `config.js`: editable site data for fallback gigs, setlist tags, band members, shop settings and booking email.
 - `app.js`: renders fallback gigs, band members, merch cards, mobile menu and booking email behaviour.
 - `firebase-config.js`: Firebase project settings used by the live event loader and admin page.
-- `gigs-live.js`: loads public events from Firebase onto `home.html` and `gigs.html`.
+- `gigs-live.js`: loads public events from Firebase onto `index.html` and `gigs.html`.
 - `admin-gigs.js`: handles private admin login, event creation, visibility changes and deletion.
 - `assets/`: logo and band photos used by the website.
 
@@ -42,7 +42,7 @@ Keep the image path exactly matched to the filename in `assets/`.
 
 Use `backstage.html` to add events through Firebase. Public events automatically appear in both places:
 
-- `home.html`, in the home page Upcoming Gigs section.
+- `index.html`, in the home page Upcoming Gigs section.
 - `gigs.html`, in the standalone Gigs page.
 
 Events are saved in the Firestore `gigs` collection. Public events are shown only when `public` is `true` and the event date has not expired. Hidden events stay visible in admin only.
@@ -76,10 +76,10 @@ The admin page is split into Make Event, Event List and Publishing sections. Use
 
 The booking form appears in two places:
 
-- `home.html`, at the bottom of the main page.
+- `index.html`, at the bottom of the main page.
 - `booking.html`, as the dedicated booking page.
 
-The main page also has a separate general enquiries form at `home.html#enquiries`.
+The main page also has a separate general enquiries form at `index.html#enquiries`.
 
 The home page booking and general enquiries forms submit through Formspree using the form `action` URL on each form. The booking page has its own matching Formspree submit script.
 
@@ -135,7 +135,7 @@ Current expected image files:
 - `assets/Kuzma.png`
 - `assets/Justin.png`
 
-If filenames change, update the references in `home.html`, `config.js`, and `app.js`.
+If filenames change, update the references in `index.html`, `config.js`, and `app.js`.
 
 ## Merch Settings
 
