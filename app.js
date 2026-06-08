@@ -124,6 +124,15 @@ function renderSongTags() {
 function renderBand() {
   if (!$('#bandGrid')) return;
   const members = cfg.band || [];
+  if (!members.length) {
+  $('#bandGrid').innerHTML = `
+    <article class="empty-card glass-panel">
+      <span class="pill">Coming soon</span>
+      <h3>Band member profiles are coming soon.</h3>
+      <p>In the meantime, follow Rockstok on social media or get in touch for bookings.</p>
+    </article>`;
+  return;
+}
   const performers = members.filter(member => member.type !== 'tech');
   const techMembers = members.filter(member => member.type === 'tech');
 

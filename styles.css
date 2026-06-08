@@ -1138,6 +1138,7 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
     justify-content: flex-start;
   }
 }
+
 /* Mobile fix for About section text overflowing */
 @media (max-width: 700px) {
   .about-page-section {
@@ -1155,11 +1156,147 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 
   .about-page-section h2 span {
     display: inline;
+    white-space: normal;
   }
 
   .about-page-section .copy-block {
     max-width: 100%;
     font-size: 1rem;
     line-height: 1.55;
+  }
+}
+
+/* Homepage hero buttons: 2x2 grid, centred in the left hero text area */
+.hero .hero-copy .hero-actions.hero-actions-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(100%, 620px);
+  max-width: 620px;
+  margin: 6rem auto 0 !important;
+  padding: 0;
+  transform: none !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero .hero-copy .hero-actions.hero-actions-grid .button {
+  width: 100%;
+  min-width: 0;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (max-width: 850px) {
+  .hero .hero-copy .hero-actions.hero-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 620px);
+    margin: 24px auto 0 !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero .hero-copy .hero-actions.hero-actions-grid {
+    grid-template-columns: 1fr;
+    width: min(100%, 420px);
+  }
+}
+
+/* Socials page */
+.socials-page h1 {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  margin: 0;
+  max-width: 720px;
+}
+
+.socials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.logo-socials-grid {
+  align-items: stretch;
+}
+
+.social-card {
+  overflow: hidden;
+}
+
+.social-logo-card {
+  min-height: 340px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  text-align: center;
+}
+
+.social-logo-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.social-logo {
+  width: min(180px, 70%);
+  max-height: 180px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 18px rgba(92, 235, 255, 0.18))
+    drop-shadow(0 0 42px rgba(92, 235, 255, 0.08));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.social-logo-link:hover .social-logo {
+  transform: translateY(-3px) scale(1.03);
+  filter:
+    drop-shadow(0 0 22px rgba(92, 235, 255, 0.28))
+    drop-shadow(0 0 52px rgba(92, 235, 255, 0.12));
+}
+
+.social-link-button {
+  width: 100%;
+  max-width: 280px;
+  justify-content: center;
+}
+
+.promo-card {
+  background:
+    radial-gradient(circle at top, rgba(94, 238, 255, 0.18), transparent 45%),
+    rgba(5, 18, 28, 0.55);
+}
+
+@media (max-width: 1100px) {
+  .socials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-logo-card {
+    min-height: 260px;
+  }
+
+  .social-logo {
+    width: min(160px, 60%);
+  }
+}
+
+@media (max-width: 600px) {
+  .socials-page h1 {
+    font-size: clamp(2.6rem, 14vw, 4rem);
+  }
+
+  .social-logo-card {
+    padding: 1.4rem;
+    min-height: 230px;
+  }
+
+  .social-logo {
+    width: min(140px, 65%);
   }
 }
