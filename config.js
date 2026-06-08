@@ -21,22 +21,24 @@ window.ROCKSTOK_CONFIG = {
   // Add confirmed public gigs here. Example format:
   // { date: "2026-09-27", title: "Rockstok Live", venue: "Paraoa Brewing Co.", location: "Whangaparaoa", time: "8:00 PM", ticketUrl: "" }
   gigs: [],
-
-  songTags: [
-    "Dragon",
-    "The Cars",
-    "Green Day",
-    "My Chemical Romance",
-    "Hello Sailor",
-    "The Cure",
-    "Beastie Boys",
-    "R.E.M.",
-    "Pink Floyd",
-    "Original Rockstok Songs",
-    "Classic Covers",
-    "Modern Favourites"
-  ],
-
+  
+songTags: [
+  "Dragon",
+  "The Cars",
+  "Green Day",
+  "My Chemical Romance",
+  "Hello Sailor",
+  "The Cure",
+  "Beastie Boys",
+  "R.E.M.",
+  "Pink Floyd",
+  "Guns N' Roses",
+  "The Killers",
+  "Foo Fighters",
+  "Original Rockstok Songs",
+  "Classic Covers",
+  "Modern Favourites"
+],
   band: [
     {
       name: "Sean O'Shea",

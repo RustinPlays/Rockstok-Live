@@ -222,7 +222,7 @@ async function loadFourthwallProducts() {
     }
 
     notice.textContent = '';
-    grid.innerHTML = products.slice(0, 8).map(product => `
+    grid.innerHTML = products.slice(0, 6).map(product => `
       <article class="product-card glass-panel">
         ${getProductImage(product) ? `<img src="${getProductImage(product)}" alt="${product.name || product.title || 'Rockstok merch'}">` : `<div class="placeholder-product"><img src="assets/logo.png" alt="Rockstok logo" /></div>`}
         <div class="product-info">
