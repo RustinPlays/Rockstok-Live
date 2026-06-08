@@ -348,7 +348,7 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 
 .service-bubble-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(12px, 2vw, 18px);
 }
 
@@ -388,6 +388,11 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 }
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
 .tag-cloud span { font-weight: 800; }
+.setlist-note {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
 
 .merch-heading { align-items: center; }
 .notice { padding: 6px 0 16px; }
@@ -433,6 +438,48 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 }
 .band-content p:last-child { margin-bottom: 0; }
 
+.tech-section {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 16px;
+  margin-top: clamp(8px, 2vw, 18px);
+}
+
+.tech-heading {
+  margin-bottom: 0;
+}
+
+.tech-heading h3 {
+  font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 760px);
+}
+
+.tech-card {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 2.4vw, 28px);
+  padding: clamp(16px, 2.4vw, 24px);
+}
+
+.tech-image-wrap {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(48,184,255,.12), rgba(255,255,255,0));
+}
+
+.tech-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center top;
+}
+
 .booking-section {
   display: grid;
   grid-template-columns: .92fr 1.08fr;
@@ -468,8 +515,29 @@ input:focus, textarea:focus, select:focus {
   border-color: rgba(126,234,255,.46);
 }
 .site-footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
-.footer-grid { display: flex; justify-content: space-between; gap: 24px; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
+  align-items: center;
+  gap: 24px;
+}
 .footer-links { display: flex; flex-wrap: wrap; gap: 18px; font-weight: 800; }
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.footer-social span {
+  flex: 1 1 100%;
+  color: var(--accent-3);
+  font-weight: 900;
+  text-align: center;
+}
+.footer-social .button {
+  min-width: 118px;
+}
 code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; }
 
 .backstage-link {
@@ -674,7 +742,18 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .page-section { padding-top: 58px; }
   .section-heading, .footer-grid { display: block; }
   .section-heading p { margin-top: 12px; }
-  .services-grid, .product-grid, .band-grid, .service-bubble-grid { grid-template-columns: 1fr; }
+  .footer-social {
+    justify-content: flex-start;
+    margin-top: 18px;
+  }
+  .footer-social span {
+    text-align: left;
+  }
+  .services-grid, .product-grid, .band-grid { grid-template-columns: 1fr; }
+  .service-bubble-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tech-grid {
+    grid-template-columns: 1fr;
+  }
   .admin-grid, .admin-mini-form, .admin-split { grid-template-columns: 1fr; }
   .admin-event-row { display: grid; }
   .admin-event-actions { justify-items: start; }
@@ -755,6 +834,12 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   input, textarea, select { padding: 12px; border-radius: 13px; }
   .site-footer { padding: 24px 0; }
   .footer-links { margin-top: 16px; gap: 12px; }
+  .tech-card {
+    grid-template-columns: 1fr;
+  }
+  .tech-image-wrap {
+    max-width: 260px;
+  }
 }
 .form-status {
   margin: 0;
@@ -859,6 +944,8 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 
 .admin-dashboard {
   display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(360px, 1.05fr);
+  align-items: start;
   gap: 18px;
 }
 
@@ -1029,6 +1116,10 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 @media (max-width: 980px) {
   .admin-intro {
     position: static;
+  }
+
+  .admin-dashboard {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -66,7 +66,8 @@ window.ROCKSTOK_CONFIG = {
       name: "Justin O'Shea",
       role: "Sound and Lighting Technician",
       bio: "Runs the sound, lighting and live-show production details.",
-      image: "assets/Justin.png"
+      image: "assets/Justin.png",
+      type: "tech"
     }
   ]
 };

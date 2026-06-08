@@ -123,7 +123,11 @@ function renderSongTags() {
 
 function renderBand() {
   if (!$('#bandGrid')) return;
-  $('#bandGrid').innerHTML = (cfg.band || []).map(member => `
+  const members = cfg.band || [];
+  const performers = members.filter(member => member.type !== 'tech');
+  const techMembers = members.filter(member => member.type === 'tech');
+
+  const performerCards = performers.map(member => `
     <article class="band-card glass-panel">
       <div class="band-image-wrap">
         <img class="band-image" src="${member.image}" alt="${member.name}" />
@@ -134,6 +138,32 @@ function renderBand() {
         <p>${member.bio}</p>
       </div>
     </article>`).join('');
+
+  const techCards = techMembers.length ? `
+    <section class="tech-section">
+      <div class="section-heading tech-heading">
+        <div>
+          <p class="eyebrow">Production</p>
+          <h3>Sound and lighting support.</h3>
+        </div>
+        <p>The live show depends on the people making the room sound and look right.</p>
+      </div>
+      <div class="tech-grid">
+        ${techMembers.map(member => `
+          <article class="tech-card glass-panel">
+            <div class="tech-image-wrap">
+              <img class="tech-image" src="${member.image}" alt="${member.name}" />
+            </div>
+            <div class="band-content">
+              <h3>${member.name}</h3>
+              <p class="price">${member.role}</p>
+              <p>${member.bio}</p>
+            </div>
+          </article>`).join('')}
+      </div>
+    </section>` : '';
+
+  $('#bandGrid').innerHTML = performerCards + techCards;
 }
 
 function getProductImage(product) {
