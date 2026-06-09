@@ -153,7 +153,7 @@ function renderBand() {
       <div class="section-heading tech-heading">
         <div>
           <p class="eyebrow">Production</p>
-          <h3>Sound and lighting support.</h3>
+          <h3>Sound and Lighting support.</h3>
         </div>
         <p>The live show depends on the people making the room sound and look right.</p>
       </div>
@@ -334,9 +334,30 @@ function setupNav() {
   const toggle = $('.nav-toggle');
   const links = $('#nav-links');
   if (!toggle || !links) return;
+
+  // Shared phone menu: toggles the nav and closes it after a visitor picks a link.
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  links.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
+function setupTopLinks() {
+  // Footer "Top" links use #top; this makes them reliable even if the browser
+  // does not move because the hash is already present.
+  document.querySelectorAll('a[href="#top"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, '', `${location.pathname}${location.search}#top`);
+    });
   });
 }
 
@@ -359,4 +380,5 @@ renderBand();
 loadFourthwallProducts();
 setupBookingForm();
 setupNav();
+setupTopLinks();
 setupReadMore();

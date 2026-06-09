@@ -57,6 +57,7 @@ let unsubscribeGigs = null;
 hideAdminPanel();
 setupBackstageFade();
 setupGoogleMapsAutocomplete();
+setupAdminMobileNav();
 
 if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
@@ -180,6 +181,25 @@ function hideAdminPanel() {
 function setSessionLinksVisible(visible) {
   sessionLinks.forEach((link) => {
     link.hidden = !visible;
+  });
+}
+
+function setupAdminMobileNav() {
+  const toggle = document.querySelector(".nav-toggle");
+  const links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+
+  // Keep admin actions reachable on phones by matching the public mobile menu.
+  toggle.addEventListener("click", () => {
+    const open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+
+  links.querySelectorAll("a, button").forEach((item) => {
+    item.addEventListener("click", () => {
+      links.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    });
   });
 }
 

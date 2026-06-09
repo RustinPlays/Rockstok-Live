@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enquiries | Rockstok</title>
+  <meta name="description" content="Send Rockstok a general enquiry about the band, merch, media, setlists or availability." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="smoke-bg smoke-a"></div>
+  <div class="smoke-bg smoke-b"></div>
+
+  <header class="site-header" id="top">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="index.html#top" aria-label="Rockstok home">
+        <img class="brand-logo" src="assets/logo.png" alt="Rockstok logo" />
+        <span>Rockstok</span>
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+
+      <div class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="gigs.html">Gigs</a>
+        <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
+        <a href="band.html">Band</a>
+        <a class="active" href="enquiries.html">Enquiries</a>
+        <a href="booking.html">Bookings</a>
+        <a href="socials.html">Socials</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section wrap booking-section booking-page-section" id="enquiries">
+      <div class="booking-copy">
+        <p class="eyebrow">Enquiries</p>
+        <h1>Ask Rockstok anything.</h1>
+        <p>
+          Use this for general questions about the band, merch, setlists,
+          availability, media or anything that is not a full event booking.
+        </p>
+
+        <div class="contact-stack">
+          <article class="contact-card glass-panel">
+            <strong>Direct Contact</strong>
+            <span><a href="mailto:rockstokcovers@gmail.com">rockstokcovers@gmail.com</a></span>
+            <span>Sean - <a href="tel:+6421416091">021 416 091</a></span>
+            <span>Justin - <a href="tel:+64275186656">027 518 6656</a></span>
+          </article>
+        </div>
+      </div>
+
+      <form
+        id="general-enquiry-form"
+        class="booking-card glass-panel booking-form"
+        action="https://formspree.io/f/mlgkbrap"
+        method="POST"
+        data-ajax-form
+        data-sending-message="Sending your enquiry..."
+        data-success-message="Thanks! Your enquiry has been sent. We will be in touch soon."
+        data-error-message="Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com."
+      >
+        <!-- Keep this endpoint and subject separate from booking enquiries. -->
+        <input type="hidden" name="_subject" value="New Rockstok General Enquiry" />
+
+        <label>
+          Your name
+          <input name="name" placeholder="Your name" required />
+        </label>
+
+        <label>
+          Email address
+          <input name="email" type="email" placeholder="Your email address" required />
+        </label>
+
+        <label>
+          Phone number
+          <input name="phone" type="tel" placeholder="Best phone number" />
+        </label>
+
+        <label>
+          Enquiry type
+          <select name="enquiry_type">
+            <option value="General question">General question</option>
+            <option value="Merch">Merch</option>
+            <option value="Music / setlist">Music / setlist</option>
+            <option value="Media">Media</option>
+            <option value="Availability">Availability</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          Message
+          <textarea name="message" rows="6" placeholder="What would you like to ask?" required></textarea>
+        </label>
+
+        <p class="form-status" aria-live="polite"></p>
+
+        <button class="button primary" type="submit">Send Enquiry</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <strong>Rockstok</strong>
+        <p>Classic covers, original music, upcoming gigs, merch and bookings.</p>
+      </div>
+      <div class="footer-social">
+        <span>Follow Rockstok</span>
+        <a class="button small ghost" href="https://instagram.com/rockstokcovers" target="_blank" rel="noopener">Instagram</a>
+        <a class="button small ghost" href="https://facebook.com/rockstokcovers" target="_blank" rel="noopener">Facebook</a>
+      </div>
+
+      <div class="footer-links">
+        <a href="#top">Top</a>
+        <a href="about.html">About</a>
+        <a href="gigs.html">Gigs</a>
+        <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
+        <a href="band.html">Band</a>
+        <a href="enquiries.html">Enquiries</a>
+        <a href="booking.html">Bookings</a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="backstage-link" href="backstage.html" target="_blank" rel="noopener" aria-label="Backstage access">
+    <img src="assets/logo.png" alt="" />
+  </a>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

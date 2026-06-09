@@ -22,8 +22,11 @@
         <span>Backstage</span>
       </a>
 
-      <div class="nav-links admin-nav-links">
-        <a href="index.html">Home</a>
+      <!-- Admin uses the same phone menu pattern as the public pages so controls stay reachable. -->
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+
+      <div class="nav-links admin-nav-links" id="nav-links">
+        <a href="index.html">Back to Site</a>
         <a class="admin-session-link" href="#make-event" hidden>Make Event</a>
         <a class="admin-session-link" href="#event-list" hidden>Event List</a>
         <button id="logout-button" class="admin-nav-button admin-session-link" type="button" hidden>Log Out</button>

@@ -81,7 +81,8 @@ img { display: block; max-width: 100%; }
 .nav-links a:hover, .nav-links a.active { color: var(--accent-3); }
 .nav-toggle { display: none; }
 
-.section-top { padding-top: clamp(72px, 8vw, 104px); }
+/* Page intro spacing: lower padding moves the small eyebrow labels and headings higher. */
+.section-top { padding-top: clamp(52px, 6vw, 82px); }
 .section {
   position: relative;
   padding: var(--section-space) 0;
@@ -110,7 +111,7 @@ main .section:not(:first-child)::after {
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(126,234,255,.55), transparent);
 }
-.page-section { padding-top: clamp(88px, 9vw, 128px); min-height: calc(100vh - 150px); }
+.page-section { padding-top: clamp(58px, 6vw, 88px); min-height: calc(100vh - 150px); }
 .page-section h1 { font-size: clamp(3.4rem, 7vw, 6.5rem); max-width: 12ch; }
 .about-page-section {
   display: grid;
@@ -486,7 +487,7 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
   gap: var(--content-gap);
   align-items: start;
 }
-.booking-page-section { padding-top: 96px; min-height: calc(100vh - 160px); }
+.booking-page-section { padding-top: clamp(58px, 6vw, 86px); min-height: calc(100vh - 160px); }
 .booking-page-section .eyebrow {
   font-size: clamp(3.4rem, 8vw, 7.25rem);
   line-height: .9;
@@ -500,6 +501,12 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 .contact-card span { color: var(--muted); }
 .booking-card { padding: 22px; display: grid; gap: 14px; }
 label { display: grid; gap: 8px; font-weight: 800; color: var(--muted); }
+.field-hint {
+  color: var(--muted);
+  font-size: .86rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
 input, textarea, select {
   width: 100%;
   border: 1px solid var(--line);
@@ -565,6 +572,13 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   height: 1px;
   object-fit: cover;
   opacity: 0;
+}
+
+/* Stop the private backstage shortcut from catching accidental phone taps. */
+@media (max-width: 850px) {
+  .backstage-link {
+    display: none;
+  }
 }
 
 .admin-section {
@@ -730,6 +744,17 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .band-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .booking-page-section { min-height: auto; }
   .page-section { min-height: auto; }
+
+  /* Mobile booking flow: heading first, form second, contact/follow boxes last. */
+  .booking-section .booking-copy {
+    display: contents;
+  }
+  .booking-section .booking-copy > .eyebrow { order: 1; }
+  .booking-section .booking-copy > h1,
+  .booking-section .booking-copy > h2 { order: 2; }
+  .booking-section .booking-copy > p { order: 3; }
+  .booking-section .booking-form { order: 4; }
+  .booking-section .contact-stack { order: 5; margin-top: 0; }
 }
 @media (max-width: 850px) {
   :root {
@@ -738,8 +763,8 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
     --radius: 22px;
   }
   .wrap { width: min(100% - 28px, 1180px); }
-  .section-top { padding-top: 44px; }
-  .page-section { padding-top: 58px; }
+  .section-top { padding-top: 30px; }
+  .page-section { padding-top: 34px; }
   .section-heading, .footer-grid { display: block; }
   .section-heading p { margin-top: 12px; }
   .footer-social {
@@ -773,7 +798,7 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .about-page-section h2 { font-size: clamp(2.05rem, 7.8vw, 3.25rem); max-width: none; }
   h2 { font-size: clamp(2rem, 10vw, 3.3rem); }
   h3 { font-size: clamp(1.35rem, 6vw, 2rem); }
-  .booking-page-section { padding-top: 54px; }
+  .booking-page-section { padding-top: 34px; }
   .booking-page-section .eyebrow { font-size: clamp(3rem, 14vw, 4.75rem); }
   .booking-page-section h1 { font-size: clamp(2rem, 9vw, 3.2rem); max-width: 12ch; }
   .collapsible-copy:not(.expanded) p:nth-of-type(n+3) { display: none; }
@@ -810,6 +835,10 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
     border-radius: 18px;
     padding: 16px;
     box-shadow: var(--shadow);
+  }
+  .nav-links .admin-nav-button {
+    width: 100%;
+    justify-content: flex-start;
   }
   .nav-links.open { display: flex; }
 }

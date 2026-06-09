@@ -29,6 +29,7 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
+        <a href="enquiries.html">Enquiries</a>
         <a class="active" href="booking.html">Bookings</a>
         <a href="socials.html">Socials</a>
       </div>
@@ -78,6 +79,8 @@
         <label>
           Event date
           <input type="date" name="date" required />
+          <!-- Date inputs do not show placeholder text on many phones, so keep a visible example. -->
+          <span class="field-hint">Example: 14/09/2026</span>
         </label>
 
         <label>
@@ -153,6 +156,7 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
+        <a href="enquiries.html">Enquiries</a>
         <a href="booking.html">Bookings</a>
       </div>
     </div>
@@ -186,7 +190,7 @@
           });
 
           if (response.ok) {
-            bookingStatus.textContent = "Thanks! Your booking enquiry has been sent. We’ll be in touch soon.";
+            bookingStatus.textContent = "Thanks! Your booking enquiry has been sent. We will be in touch soon.";
             bookingForm.reset();
           } else {
             bookingStatus.textContent = "Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com.";

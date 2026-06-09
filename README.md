@@ -10,6 +10,7 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `music.html`: redirect to `about.html#music` for old links.
 - `merch.html`: standalone Merch tab.
 - `band.html`: standalone Band tab.
+- `enquiries.html`: standalone Enquiries tab for general messages.
 - `booking.html`: dedicated booking page linked from the main navigation.
 - `styles.css`: colours, spacing, typography and responsive layout.
 - `config.js`: editable site data for fallback gigs, setlist tags, band members, shop settings and booking email.
@@ -79,7 +80,7 @@ The booking form appears in two places:
 - `index.html`, at the bottom of the main page.
 - `booking.html`, as the dedicated booking page.
 
-The main page also has a separate general enquiries form at `index.html#enquiries`.
+The site has a separate general enquiries page at `enquiries.html`.
 
 The home page booking and general enquiries forms submit through Formspree using the form `action` URL on each form. The booking page has its own matching Formspree submit script.
 
