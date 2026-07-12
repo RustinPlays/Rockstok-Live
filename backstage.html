@@ -22,11 +22,8 @@
         <span>Backstage</span>
       </a>
 
-      <!-- Admin uses the same phone menu pattern as the public pages so controls stay reachable. -->
-      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
-
-      <div class="nav-links admin-nav-links" id="nav-links">
-        <a href="index.html">Back to Site</a>
+      <div class="nav-links admin-nav-links">
+        <a href="index.html">Home</a>
         <a class="admin-session-link" href="#make-event" hidden>Make Event</a>
         <a class="admin-session-link" href="#event-list" hidden>Event List</a>
         <button id="logout-button" class="admin-nav-button admin-session-link" type="button" hidden>Log Out</button>
@@ -35,6 +32,7 @@
   </header>
 
   <main>
+    <!-- Private admin page: Firebase auth gates the event manager in admin-gigs.js. -->
     <section class="section wrap booking-page-section admin-page-section">
       <div class="booking-copy admin-intro">
         <p class="eyebrow admin-backstage-word">Backstage</p>
@@ -42,6 +40,7 @@
         <p>Log in to add upcoming gigs. Public gigs will automatically appear on the live website.</p>
       </div>
 
+      <!-- Login panel is visible until an allowed admin account is authenticated. -->
       <section id="login-panel" class="booking-card glass-panel booking-form admin-login-panel">
         <h2>Admin Login</h2>
 
@@ -62,6 +61,7 @@
         </form>
       </section>
 
+      <!-- Event manager: create/edit gigs, filter saved events and remove expired ones. -->
       <section id="admin-panel" class="admin-panel" hidden>
         <div class="admin-topbar">
           <div>
@@ -73,9 +73,9 @@
         <div class="admin-dashboard">
           <section id="make-event" class="admin-card glass-panel booking-form">
             <div class="admin-card-heading">
-              <p class="eyebrow">Make event</p>
-              <h3>Create a new public gig</h3>
-              <p>Add the details once here. Public events show on the live website.</p>
+              <p id="gig-form-eyebrow" class="eyebrow">Make event</p>
+              <h3 id="gig-form-title">Create a new public gig</h3>
+              <p id="gig-form-description">Add the details once here. Public events show on the live website.</p>
             </div>
 
             <form id="gig-form" class="admin-event-form">
@@ -132,7 +132,10 @@
                 </select>
               </label>
 
-              <button class="button primary" type="submit">Save Event</button>
+              <div class="admin-form-actions">
+                <button id="gig-submit-button" class="button primary" type="submit">Save Event</button>
+                <button id="gig-cancel-edit-button" class="button ghost" type="button" hidden>Cancel Edit</button>
+              </div>
               <p id="gig-form-status" class="form-status" aria-live="polite"></p>
             </form>
           </section>

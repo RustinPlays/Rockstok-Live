@@ -7,17 +7,15 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `index.html`: main page layout and public page copy.
 - `about.html`: About tab, including Services and Music sections.
 - `gigs.html`: standalone Gigs tab.
-- `music.html`: redirect to `about.html#music` for old links.
 - `merch.html`: standalone Merch tab.
 - `band.html`: standalone Band tab.
-- `enquiries.html`: standalone Enquiries tab for general messages.
-- `booking.html`: dedicated booking page linked from the main navigation.
-- `styles.css`: colours, spacing, typography and responsive layout.
-- `config.js`: editable site data for fallback gigs, setlist tags, band members, shop settings and booking email.
-- `app.js`: renders fallback gigs, band members, merch cards, mobile menu and booking email behaviour.
+- `booking.html`: dedicated query / booking page linked from the main navigation.
+- `styles.css`: colors, spacing, typography and responsive layout.
+- `config.js`: editable site data for fallback gigs, setlist tags, band members and shop settings.
+- `app.js`: renders fallback gigs, band members, merch cards, mobile menu and query / booking form behavior.
 - `firebase-config.js`: Firebase project settings used by the live event loader and admin page.
 - `gigs-live.js`: loads public events from Firebase onto `index.html` and `gigs.html`.
-- `admin-gigs.js`: handles private admin login, event creation, visibility changes and deletion.
+- `admin-gigs.js`: handles private admin login, event creation, editing, visibility changes and deletion.
 - `assets/`: logo and band photos used by the website.
 
 The main page still includes the full site content for now. Music and Services live under About instead of separate top-level nav pages.
@@ -69,42 +67,26 @@ gigs: [
 Use the date format `YYYY-MM-DD`. Leave `ticketUrl` or `ticketLink` empty if there is no ticket link.
 Use `mapAddress` for the Google Maps pin address. If it is blank, the site uses the venue and location as the map search.
 
-Public gig listings automatically hide events one day after the event date. Expired events remain in Firebase until they are deleted in admin.
+Public gig listings automatically hide events one day after the event date. Expired public events are automatically deleted after they have been expired for 30 days when the admin page loads. Hidden events remain in Firebase until they are deleted in admin.
 
-The admin page is split into Make Event, Event List and Publishing sections. Use Event List to hide, show or delete saved events.
+The admin page is split into Make Event and Event List sections. Use Event List to switch between all, live, hidden and expired events. Public events automatically move into expired when their date has passed. The expired section includes a Remove All button for clearing old events sooner.
 
-## Booking Form
+## Query / Booking Form
 
-The booking form appears in two places:
+The combined query / booking form appears in two places:
 
-- `index.html`, at the bottom of the main page.
+- `index.html`, at `#query-booking`.
 - `booking.html`, as the dedicated booking page.
 
-The site has a separate general enquiries page at `enquiries.html`.
+The first select chooses whether the message is a booking or a query / enquiry. `app.js` then shows the matching fields, updates the submit button, and disables hidden fields so only the relevant answers are sent.
 
-The home page booking and general enquiries forms submit through Formspree using the form `action` URL on each form. The booking page has its own matching Formspree submit script.
+Both forms submit through Formspree using the same endpoint:
 
-Current booking Formspree endpoint:
+Current query / booking Formspree endpoint:
 
 ```html
 https://formspree.io/f/maqzqaob
 ```
-
-Current general enquiries Formspree endpoint:
-
-```html
-https://formspree.io/f/mlgkbrap
-```
-
-The old mailto fallback is still available in `app.js` for forms that explicitly use `data-mailto-booking`. The fallback destination email is controlled by `bookingEmail` in `config.js`.
-
-Current testing address:
-
-```js
-bookingEmail: "Justin.oshea135@gmail.com"
-```
-
-Change it to `rockstokcovers@gmail.com` if you use the mailto fallback again.
 
 ## Google Maps Autocomplete
 
@@ -135,8 +117,11 @@ Current expected image files:
 - `assets/Norm.png`
 - `assets/Kuzma.png`
 - `assets/Justin.png`
+- `assets/Instagram.png`
+- `assets/Facebook.png`
+- `assets/Youtube.png`
 
-If filenames change, update the references in `index.html`, `config.js`, and `app.js`.
+If filenames change, update the references in the relevant HTML files, `config.js`, and `app.js`.
 
 ## Merch Settings
 

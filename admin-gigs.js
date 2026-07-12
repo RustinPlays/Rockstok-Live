@@ -22,10 +22,12 @@ import {
 
 import { firebaseConfig } from "./firebase-config.js";
 
+// Firebase services are shared by every admin action on this page.
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Keep the allow-list client-side for UI gating; Firestore/Auth rules should still enforce real access.
 const allowedEmails = [
   "justin.oshea135@gmail.com",
   "rockstokcovers@gmail.com"
@@ -34,6 +36,7 @@ const allowedEmails = [
 const loginPanel = document.getElementById("login-panel");
 const adminPanel = document.getElementById("admin-panel");
 
+// Login and session controls.
 const loginForm = document.getElementById("admin-login-form");
 const emailInput = document.getElementById("admin-email");
 const passwordInput = document.getElementById("admin-password");
@@ -42,22 +45,39 @@ const logoutButton = document.getElementById("logout-button");
 const loginStatus = document.getElementById("login-status");
 const sessionLinks = document.querySelectorAll(".admin-session-link");
 
+// Event form controls. The same form creates new gigs and edits existing gigs.
 const gigForm = document.getElementById("gig-form");
+const gigFormEyebrow = document.getElementById("gig-form-eyebrow");
+const gigFormTitle = document.getElementById("gig-form-title");
+const gigFormDescription = document.getElementById("gig-form-description");
+const gigTitleInput = document.getElementById("gig-title");
+const gigDateInput = document.getElementById("gig-date");
+const gigTimeInput = document.getElementById("gig-time");
 const gigVenueInput = document.getElementById("gig-venue");
 const gigLocationInput = document.getElementById("gig-location");
 const gigMapAddressInput = document.getElementById("gig-map-address");
 const gigMapPlaceIdInput = document.getElementById("gig-map-place-id");
 const gigMapPreview = document.getElementById("gig-map-preview");
+const gigTicketLinkInput = document.getElementById("gig-ticket-link");
+const gigDescriptionInput = document.getElementById("gig-description");
+const gigPublicInput = document.getElementById("gig-public");
+const gigSubmitButton = document.getElementById("gig-submit-button");
+const gigCancelEditButton = document.getElementById("gig-cancel-edit-button");
 const gigFormStatus = document.getElementById("gig-form-status");
 const adminGigsList = document.getElementById("admin-gigs-list");
 const adminEventSummary = document.getElementById("admin-event-summary");
 
 let unsubscribeGigs = null;
+let editingGigId = null;
+let savedGigsById = new Map();
+let savedGigItems = [];
+let activeGigFilter = "live";
+const expiredAutoDeleteDays = 30;
 
+// Start locked down until Firebase auth confirms an allowed admin account.
 hideAdminPanel();
 setupBackstageFade();
 setupGoogleMapsAutocomplete();
-setupAdminMobileNav();
 
 if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
@@ -90,6 +110,7 @@ if (logoutButton) {
   });
 }
 
+// Show the admin interface only for signed-in users on the allow-list.
 onAuthStateChanged(auth, async (user) => {
   const userEmail = user?.email?.toLowerCase() || "";
 
@@ -126,35 +147,53 @@ if (gigForm) {
 
     gigFormStatus.textContent = "Saving gig...";
 
+    // Keep the Firestore document shape the same for create and update.
     const gig = {
-      title: document.getElementById("gig-title").value.trim(),
-      date: document.getElementById("gig-date").value,
-      time: document.getElementById("gig-time").value.trim(),
+      title: gigTitleInput.value.trim(),
+      date: gigDateInput.value,
+      time: gigTimeInput.value.trim(),
       venue: gigVenueInput.value.trim(),
       location: gigLocationInput.value.trim(),
       mapAddress: gigMapAddressInput.value.trim(),
       mapPlaceId: gigMapPlaceIdInput.value.trim(),
-      ticketLink: document.getElementById("gig-ticket-link").value.trim(),
-      description: document.getElementById("gig-description").value.trim(),
-      public: document.getElementById("gig-public").value === "true",
-      createdAt: serverTimestamp(),
+      ticketLink: gigTicketLinkInput.value.trim(),
+      ticketUrl: gigTicketLinkInput.value.trim(),
+      description: gigDescriptionInput.value.trim(),
+      public: gigPublicInput.value === "true",
       updatedAt: serverTimestamp()
     };
 
     try {
-      await addDoc(collection(db, "gigs"), gig);
+      if (gigSubmitButton) gigSubmitButton.disabled = true;
 
-      gigForm.reset();
-      document.getElementById("gig-public").value = "true";
-      gigMapPlaceIdInput.value = "";
-      updateMapPreview();
-      gigFormStatus.textContent = "Event saved. If public, it now appears on the home page and gigs page.";
+      if (editingGigId) {
+        await updateDoc(doc(db, "gigs", editingGigId), gig);
+      } else {
+        // createdAt is only set on new events so edits do not rewrite the original creation time.
+        await addDoc(collection(db, "gigs"), {
+          ...gig,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      const wasEditing = Boolean(editingGigId);
+      resetGigForm();
+      gigFormStatus.textContent = wasEditing
+        ? "Event updated. Any public changes now appear on the home page and gigs page."
+        : "Event saved. If public, it now appears on the home page and gigs page.";
     } catch (error) {
       console.error(error);
       gigFormStatus.textContent = "Could not save gig. Check Firebase Authentication, Firestore, and rules.";
+    } finally {
+      if (gigSubmitButton) gigSubmitButton.disabled = false;
     }
   });
 }
+
+gigCancelEditButton?.addEventListener("click", () => {
+  resetGigForm();
+  gigFormStatus.textContent = "Edit cancelled.";
+});
 
 [gigVenueInput, gigLocationInput, gigMapAddressInput].forEach((input) => {
   input?.addEventListener("input", updateMapPreview);
@@ -176,30 +215,12 @@ function hideAdminPanel() {
   loginPanel.hidden = false;
   adminPanel.hidden = true;
   setSessionLinksVisible(false);
+  resetGigForm();
 }
 
 function setSessionLinksVisible(visible) {
   sessionLinks.forEach((link) => {
     link.hidden = !visible;
-  });
-}
-
-function setupAdminMobileNav() {
-  const toggle = document.querySelector(".nav-toggle");
-  const links = document.getElementById("nav-links");
-  if (!toggle || !links) return;
-
-  // Keep admin actions reachable on phones by matching the public mobile menu.
-  toggle.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", String(open));
-  });
-
-  links.querySelectorAll("a, button").forEach((item) => {
-    item.addEventListener("click", () => {
-      links.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-    });
   });
 }
 
@@ -216,6 +237,7 @@ function setupBackstageFade() {
   window.addEventListener("scroll", updateFade, { passive: true });
 }
 
+// Live admin list: Firestore pushes every change, then the current filter re-renders the visible cards.
 function loadSavedGigs() {
   if (unsubscribeGigs) return;
 
@@ -227,11 +249,16 @@ function loadSavedGigs() {
   unsubscribeGigs = onSnapshot(
     gigsQuery,
     (snapshot) => {
-      adminGigsList.innerHTML = "";
+      savedGigsById = new Map();
+      savedGigItems = [];
 
       if (snapshot.empty) {
         updateEventSummary([]);
         adminGigsList.innerHTML = "<p>No saved events yet.</p>";
+        if (editingGigId) {
+          resetGigForm();
+          gigFormStatus.textContent = "That event is no longer saved.";
+        }
         return;
       }
 
@@ -239,36 +266,20 @@ function loadSavedGigs() {
 
       snapshot.forEach((gigDoc) => {
         const gig = gigDoc.data();
+        savedGigsById.set(gigDoc.id, gig);
         gigs.push(gig);
-
-        const card = document.createElement("article");
-        card.className = "contact-card glass-panel admin-gig-card";
-        const status = getGigStatus(gig);
-        const ticketLink = gig.ticketLink || gig.ticketUrl || "";
-        const mapAddress = getMapAddress(gig);
-
-        card.innerHTML = `
-          <div class="admin-gig-card-main">
-            <strong>${escapeHtml(gig.title || "Untitled event")}</strong>
-            <span><strong>Date:</strong> ${escapeHtml(gig.date || "Date TBC")}</span>
-            ${gig.time ? `<span><strong>Time:</strong> ${escapeHtml(gig.time)}</span>` : ""}
-            ${gig.venue ? `<span><strong>Venue:</strong> ${escapeHtml(gig.venue)}</span>` : ""}
-            ${gig.location ? `<span><strong>Location:</strong> ${escapeHtml(gig.location)}</span>` : ""}
-            ${mapAddress ? `<span><strong>Map pin:</strong> <a href="${escapeHtml(getGoogleMapsUrl(mapAddress, gig.mapPlaceId))}" target="_blank" rel="noopener">${escapeHtml(mapAddress)}</a></span>` : ""}
-            ${ticketLink ? `<span><strong>Link:</strong> <a href="${escapeHtml(ticketLink)}" target="_blank" rel="noopener">${escapeHtml(ticketLink)}</a></span>` : ""}
-            ${gig.description ? `<span><strong>Description:</strong> ${escapeHtml(gig.description)}</span>` : ""}
-            <span><strong>Status:</strong> <em class="admin-status ${status.className}">${status.label}</em></span>
-          </div>
-          <div class="admin-gig-actions">
-            <button class="button small toggle-gig-button" type="button" data-id="${gigDoc.id}" data-public="${gig.public ? "false" : "true"}">${gig.public ? "Hide" : "Show"}</button>
-            <button class="button small delete-gig-button" type="button" data-id="${gigDoc.id}">Delete</button>
-          </div>
-        `;
-
-        adminGigsList.appendChild(card);
+        savedGigItems.push({ id: gigDoc.id, gig });
       });
 
+      if (editingGigId && !savedGigsById.has(editingGigId)) {
+        resetGigForm();
+        gigFormStatus.textContent = "That event is no longer saved.";
+      }
+
       updateEventSummary(gigs);
+      renderAdminGigs();
+      // Static sites cannot schedule backend jobs; cleanup runs whenever admin loads the latest snapshot.
+      removeOldExpiredGigs(savedGigItems);
     },
     (error) => {
       console.error(error);
@@ -277,14 +288,36 @@ function loadSavedGigs() {
   );
 }
 
+if (adminEventSummary) {
+  adminEventSummary.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-filter]");
+    if (!button) return;
+
+    activeGigFilter = button.dataset.filter;
+    updateEventSummary(savedGigItems.map((item) => item.gig));
+    renderAdminGigs();
+  });
+}
+
 if (adminGigsList) {
   adminGigsList.addEventListener("click", async (event) => {
+    const removeExpiredButton = event.target.closest("#remove-expired-gigs-button");
+    if (removeExpiredButton) {
+      await removeExpiredGigs(removeExpiredButton);
+      return;
+    }
+
     const button = event.target.closest("button[data-id]");
     if (!button) return;
 
     const gigId = button.dataset.id;
 
     try {
+      if (button.classList.contains("edit-gig-button")) {
+        startEditingGig(gigId);
+        return;
+      }
+
       if (button.classList.contains("delete-gig-button")) {
         const confirmed = confirm("Delete this event?");
         if (!confirmed) return;
@@ -306,40 +339,231 @@ if (adminGigsList) {
   });
 }
 
+function renderAdminGigs() {
+  if (!adminGigsList) return;
+
+  const selectedItems = activeGigFilter === "all"
+    ? savedGigItems
+    : savedGigItems.filter(({ gig }) => getGigStatus(gig).key === activeGigFilter);
+  const section = getGigSection(activeGigFilter);
+
+  if (!selectedItems.length) {
+    adminGigsList.innerHTML = `<p>${section.emptyText}</p>`;
+    return;
+  }
+
+  adminGigsList.innerHTML = activeGigFilter === "expired"
+    ? `<div class="admin-list-toolbar"><button id="remove-expired-gigs-button" class="button small" type="button">Remove All</button></div>`
+    : "";
+
+  selectedItems.forEach(({ id, gig }) => {
+    adminGigsList.appendChild(createGigCard(id, gig));
+  });
+}
+
+// Builds one admin card. Text is escaped because event details are admin-entered content.
+function createGigCard(gigId, gig) {
+  const card = document.createElement("article");
+  card.className = "contact-card glass-panel admin-gig-card";
+  const status = getGigStatus(gig);
+  const ticketLink = gig.ticketLink || gig.ticketUrl || "";
+  const mapAddress = getMapAddress(gig);
+  const ticketLinkText = truncateText(ticketLink, 72);
+
+  card.innerHTML = `
+    <div class="admin-gig-card-main">
+      <strong>${escapeHtml(gig.title || "Untitled event")}</strong>
+      <span><strong>Date:</strong> ${escapeHtml(gig.date || "Date TBC")}</span>
+      ${gig.time ? `<span><strong>Time:</strong> ${escapeHtml(gig.time)}</span>` : ""}
+      ${gig.venue ? `<span><strong>Venue:</strong> ${escapeHtml(gig.venue)}</span>` : ""}
+      ${gig.location ? `<span><strong>Location:</strong> ${escapeHtml(gig.location)}</span>` : ""}
+      ${mapAddress ? `<span><strong>Map pin:</strong> <a href="${escapeHtml(getGoogleMapsUrl(mapAddress, gig.mapPlaceId))}" target="_blank" rel="noopener">${escapeHtml(mapAddress)}</a></span>` : ""}
+      ${ticketLink ? `<span><strong>Link:</strong> <a class="admin-truncated-link" href="${escapeHtml(ticketLink)}" title="${escapeHtml(ticketLink)}" target="_blank" rel="noopener">${escapeHtml(ticketLinkText)}</a></span>` : ""}
+      ${gig.description ? `<span><strong>Description:</strong> ${escapeHtml(gig.description)}</span>` : ""}
+      <span><strong>Status:</strong> <em class="admin-status ${status.className}">${status.label}</em></span>
+    </div>
+    <div class="admin-gig-actions">
+      <button class="button small edit-gig-button" type="button" data-id="${gigId}">Edit</button>
+      <button class="button small toggle-gig-button" type="button" data-id="${gigId}" data-public="${gig.public ? "false" : "true"}">${gig.public ? "Hide" : "Show"}</button>
+      <button class="button small delete-gig-button" type="button" data-id="${gigId}">Delete</button>
+    </div>
+  `;
+
+  return card;
+}
+
+async function removeExpiredGigs(button) {
+  const expiredItems = savedGigItems.filter(({ gig }) => getGigStatus(gig).key === "expired");
+
+  if (!expiredItems.length) return;
+
+  const confirmed = confirm(`Delete all ${expiredItems.length} expired event${expiredItems.length === 1 ? "" : "s"}?`);
+  if (!confirmed) return;
+
+  button.disabled = true;
+
+  try {
+    await Promise.all(expiredItems.map(({ id }) => deleteDoc(doc(db, "gigs", id))));
+  } catch (error) {
+    console.error(error);
+    button.disabled = false;
+    alert("Could not remove expired events.");
+  }
+}
+
+// Auto-delete only public gigs that have already been in the expired bucket for 30 days.
+async function removeOldExpiredGigs(gigItems) {
+  const oldExpiredItems = gigItems.filter(({ gig }) => shouldAutoDeleteExpiredGig(gig));
+
+  if (!oldExpiredItems.length) return;
+
+  try {
+    await Promise.all(oldExpiredItems.map(({ id }) => deleteDoc(doc(db, "gigs", id))));
+    console.info(`Removed ${oldExpiredItems.length} expired gig${oldExpiredItems.length === 1 ? "" : "s"} older than ${expiredAutoDeleteDays} days.`);
+  } catch (error) {
+    console.warn("Could not automatically remove old expired gigs.", error);
+  }
+}
+
+function startEditingGig(gigId) {
+  const gig = savedGigsById.get(gigId);
+  if (!gig) {
+    alert("Could not find this event. Try refreshing the page.");
+    return;
+  }
+
+  editingGigId = gigId;
+
+  gigTitleInput.value = gig.title || "";
+  gigDateInput.value = gig.date || "";
+  gigTimeInput.value = gig.time || "";
+  gigVenueInput.value = gig.venue || "";
+  gigLocationInput.value = gig.location || "";
+  gigMapAddressInput.value = gig.mapAddress || "";
+  gigMapPlaceIdInput.value = gig.mapPlaceId || "";
+  gigTicketLinkInput.value = gig.ticketLink || gig.ticketUrl || "";
+  gigDescriptionInput.value = gig.description || "";
+  gigPublicInput.value = gig.public ? "true" : "false";
+
+  setGigFormMode("edit");
+  updateMapPreview();
+  gigFormStatus.textContent = "Editing saved event. Save to update this gig.";
+  document.getElementById("make-event")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  gigTitleInput.focus({ preventScroll: true });
+}
+
+function resetGigForm() {
+  if (!gigForm) return;
+
+  editingGigId = null;
+  gigForm.reset();
+  gigPublicInput.value = "true";
+  gigMapPlaceIdInput.value = "";
+  setGigFormMode("create");
+  updateMapPreview();
+}
+
+// Keep the form copy/button states obvious when switching between create and edit.
+function setGigFormMode(mode) {
+  const isEditing = mode === "edit";
+
+  if (gigFormEyebrow) gigFormEyebrow.textContent = isEditing ? "Edit event" : "Make event";
+  if (gigFormTitle) gigFormTitle.textContent = isEditing ? "Edit saved gig" : "Create a new public gig";
+  if (gigFormDescription) {
+    gigFormDescription.textContent = isEditing
+      ? "Update this gig once here. Public changes show on the live website."
+      : "Add the details once here. Public events show on the live website.";
+  }
+  if (gigSubmitButton) gigSubmitButton.textContent = isEditing ? "Update Event" : "Save Event";
+  if (gigCancelEditButton) gigCancelEditButton.hidden = !isEditing;
+}
+
+// The summary is both a count display and the tab control for all/live/hidden/expired lists.
 function updateEventSummary(gigs) {
   if (!adminEventSummary) return;
 
   const live = gigs.filter((gig) => gig.public && isGigVisible(gig)).length;
   const hidden = gigs.filter((gig) => !gig.public).length;
   const expired = gigs.filter((gig) => gig.public && !isGigVisible(gig)).length;
+  const filters = [
+    { key: "all", label: "all", count: gigs.length },
+    { key: "live", label: "live", count: live },
+    { key: "hidden", label: "hidden", count: hidden },
+    { key: "expired", label: "expired", count: expired }
+  ];
 
-  adminEventSummary.innerHTML = `
-    <span><strong>${live}</strong> live</span>
-    <span><strong>${hidden}</strong> hidden</span>
-    <span><strong>${expired}</strong> expired</span>
-  `;
+  adminEventSummary.innerHTML = filters.map((filter) => `
+    <button class="admin-summary-button ${activeGigFilter === filter.key ? "is-active" : ""}" type="button" data-filter="${filter.key}">
+      <strong>${filter.count}</strong>
+      <span>${filter.label}</span>
+    </button>
+  `).join("");
 }
 
 function getGigStatus(gig) {
   if (!gig.public) {
-    return { label: "Hidden from website", className: "is-hidden" };
+    return { key: "hidden", label: "Hidden from website", className: "is-hidden" };
   }
 
   if (!isGigVisible(gig)) {
-    return { label: "Expired", className: "is-expired" };
+    return { key: "expired", label: "Expired", className: "is-expired" };
   }
 
-  return { label: "Live on website", className: "is-live" };
+  return { key: "live", label: "Live on website", className: "is-live" };
+}
+
+function getGigSection(filter) {
+  if (filter === "all") {
+    return {
+      emptyText: "No saved events yet."
+    };
+  }
+
+  if (filter === "hidden") {
+    return {
+      emptyText: "No hidden events saved."
+    };
+  }
+
+  if (filter === "expired") {
+    return {
+      emptyText: "No expired events to remove."
+    };
+  }
+
+  return {
+    emptyText: "No live events right now."
+  };
 }
 
 function isGigVisible(gig) {
-  if (!gig?.date) return false;
+  const expiry = getGigExpiryDate(gig);
+  if (!expiry) return false;
+
+  return expiry >= new Date();
+}
+
+function shouldAutoDeleteExpiredGig(gig) {
+  if (!gig?.public) return false;
+
+  const expiry = getGigExpiryDate(gig);
+  if (!expiry) return false;
+
+  const deleteAfter = new Date(expiry);
+  deleteAfter.setDate(deleteAfter.getDate() + expiredAutoDeleteDays);
+
+  return deleteAfter < new Date();
+}
+
+// A gig expires at the end of the day after its scheduled date.
+function getGigExpiryDate(gig) {
+  if (!gig?.date) return null;
 
   const expiry = new Date(`${gig.date}T23:59:59`);
-  if (Number.isNaN(expiry.getTime())) return false;
+  if (Number.isNaN(expiry.getTime())) return null;
 
   expiry.setDate(expiry.getDate() + 1);
-  return expiry >= new Date();
+  return expiry;
 }
 
 function updateMapPreview() {
@@ -373,6 +597,7 @@ function getGoogleMapsUrl(address, placeId = "") {
   return `https://www.google.com/maps/search/?${params.toString()}`;
 }
 
+// Google Places autocomplete is optional; the form still works as a plain address field without a key.
 function setupGoogleMapsAutocomplete() {
   const apiKey = window.ROCKSTOK_CONFIG?.GOOGLE_MAPS_BROWSER_API_KEY;
 
@@ -435,4 +660,12 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function truncateText(value, maxLength) {
+  const text = String(value);
+
+  if (text.length <= maxLength) return text;
+
+  return `${text.slice(0, maxLength - 3)}...`;
 }

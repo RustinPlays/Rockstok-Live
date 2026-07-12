@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Book Rockstok | Auckland Rock Band</title>
-  <meta name="description" content="Book Rockstok for pubs, private events, corporate functions, parties and weddings across Auckland and beyond." />
+  <title>Query or Book Rockstok | Auckland Rock Band</title>
+  <meta name="description" content="Send Rockstok a query or booking enquiry for pubs, private events, corporate functions, parties and weddings across Auckland and beyond." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="apple-touch-icon" href="assets/logo.png" />
   <link rel="stylesheet" href="styles.css" />
@@ -29,26 +29,25 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
-        <a href="enquiries.html">Enquiries</a>
-        <a class="active" href="booking.html">Bookings</a>
+        <a class="active" href="booking.html">Query / Booking</a>
         <a href="socials.html">Socials</a>
       </div>
     </nav>
   </header>
 
   <main>
-    <section class="section wrap booking-section booking-page-section" id="bookings">
+    <!-- Standalone query / booking page. Field groups switch between booking and enquiry in app.js. -->
+    <section class="section wrap booking-section booking-page-section" id="query-booking">
       <div class="booking-copy">
-        <p class="eyebrow">Bookings</p>
-        <h1>Bring Rockstok to your event.</h1>
+        <p class="eyebrow">Query / Booking</p>
+        <h1>Ask a question or book an event.</h1>
         <p>
-          Send through the essentials and the band will come back to you about availability,
-          setup and next steps.
+          Choose booking or query, fill in the matching details, and the band will come back to you.
         </p>
 
         <div class="contact-stack">
           <article class="contact-card glass-panel">
-            <strong>Band Inquiries</strong>
+            <strong>Direct Contact</strong>
             <span>Sean - <a href="tel:+6421416091">021 416 091</a></span>
             <span>Norm - <a href="tel:+64274432642">027 443 2642</a></span>
             <span>Justin - <a href="tel:+64275186656">027 518 6656</a></span>
@@ -68,6 +67,11 @@
         class="booking-card glass-panel booking-form"
         action="https://formspree.io/f/maqzqaob"
         method="POST"
+        data-query-booking-form
+        data-ajax-form
+        data-sending-message="Sending your booking enquiry..."
+        data-success-message="Thanks! Your booking enquiry has been sent. We will be in touch soon."
+        data-error-message="Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com."
       >
         <input type="hidden" name="_subject" value="New Rockstok Booking Enquiry" />
 
@@ -77,57 +81,81 @@
         </label>
 
         <label>
-          Event date
-          <input type="date" name="date" required />
-          <!-- Date inputs do not show placeholder text on many phones, so keep a visible example. -->
-          <span class="field-hint">Example: 14/09/2026</span>
-        </label>
-
-        <label>
           Email address
           <input type="email" name="email" placeholder="Your email address" required />
         </label>
 
         <label>
           Phone number
-          <input type="tel" name="phone" placeholder="Best phone number" required />
+          <input type="tel" name="phone" placeholder="Best phone number" />
         </label>
 
         <label>
-          Venue / suburb / city
-          <input type="text" name="venue" placeholder="Venue, suburb, or city" />
-        </label>
-
-        <label>
-          Estimated attendance
-          <input
-            type="number"
-            name="estimated_attendance"
-            placeholder="Approximate number of guests"
-            min="1"
-          />
-        </label>
-
-        <label>
-          Event type
-          <select name="event_type">
-            <option value="">Select event type</option>
-            <option value="Private event">Private event</option>
-            <option value="Pub / bar gig">Pub / bar gig</option>
-            <option value="Wedding">Wedding</option>
-            <option value="Birthday">Birthday</option>
-            <option value="Fundraiser">Fundraiser</option>
-            <option value="Corporate event">Corporate event</option>
-            <option value="Other">Other</option>
+          What is this about?
+          <select name="request_type" data-query-type>
+            <option value="booking">Booking</option>
+            <option value="query">Query / enquiry</option>
           </select>
         </label>
 
+        <div class="form-field-group" data-purpose-fields="booking">
+          <label>
+            Event type
+            <select name="event_type">
+              <option value="">Not sure yet</option>
+              <option value="Private event">Private event</option>
+              <option value="Pub / bar gig">Pub / bar gig</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Fundraiser">Fundraiser</option>
+              <option value="Corporate event">Corporate event</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label>
+            Event date
+            <input type="date" name="date" />
+          </label>
+
+          <label>
+            Venue / suburb / city
+            <input type="text" name="venue" placeholder="Venue, suburb, or city" />
+          </label>
+
+          <label>
+            Estimated attendance
+            <input
+              type="number"
+              name="estimated_attendance"
+              placeholder="Approximate number of guests"
+              min="1"
+            />
+          </label>
+        </div>
+
+        <div class="form-field-group" data-purpose-fields="query" hidden>
+          <label>
+            Query type
+            <select name="query_type" disabled>
+              <option value="General question">General question</option>
+              <option value="Availability">Availability</option>
+              <option value="Merch">Merch</option>
+              <option value="Music / setlist">Music / setlist</option>
+              <option value="Media">Media</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+        </div>
+
         <label>
-          Extra notes
+          Message
           <textarea
             name="message"
             rows="6"
             placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..."
+            required
+            data-message-field
           ></textarea>
         </label>
 
@@ -156,8 +184,7 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
-        <a href="enquiries.html">Enquiries</a>
-        <a href="booking.html">Bookings</a>
+        <a href="booking.html">Query / Booking</a>
       </div>
     </div>
   </footer>
@@ -165,44 +192,6 @@
   <a class="backstage-link" href="backstage.html" target="_blank" rel="noopener" aria-label="Backstage access">
     <img src="assets/logo.png" alt="" />
   </a>
-
-  <script>
-    const bookingForm = document.getElementById("booking-form");
-    const bookingStatus = document.getElementById("booking-form-status");
-
-    if (bookingForm) {
-      bookingForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const submitButton = bookingForm.querySelector("button[type='submit']");
-        const formData = new FormData(bookingForm);
-
-        bookingStatus.textContent = "Sending your booking enquiry...";
-        submitButton.disabled = true;
-
-        try {
-          const response = await fetch(bookingForm.action, {
-            method: bookingForm.method,
-            body: formData,
-            headers: {
-              "Accept": "application/json"
-            }
-          });
-
-          if (response.ok) {
-            bookingStatus.textContent = "Thanks! Your booking enquiry has been sent. We will be in touch soon.";
-            bookingForm.reset();
-          } else {
-            bookingStatus.textContent = "Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com.";
-          }
-        } catch (error) {
-          bookingStatus.textContent = "Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com.";
-        }
-
-        submitButton.disabled = false;
-      });
-    }
-  </script>
 
   <script src="config.js"></script>
   <script src="app.js"></script>

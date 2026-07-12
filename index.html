@@ -26,14 +26,14 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
-        <a href="enquiries.html">Enquiries</a>
-        <a href="booking.html">Bookings</a>
+        <a href="#query-booking">Query / Booking</a>
         <a href="socials.html">Socials</a>
       </div>
     </nav>
   </header>
 
   <main>
+    <!-- Homepage hero: headline, next gig and primary navigation actions. -->
     <section class="hero section-top">
       <div class="wrap hero-grid">
         <div class="hero-copy">
@@ -45,7 +45,7 @@
           </h1>
           <p class="lead">Rockstok brings a high-energy mix of rock and roll to pubs, private events, corporate functions, parties and weddings across the Auckland region.</p>
           <div class="hero-actions hero-actions-grid">
-  <a class="button primary" href="booking.html">Book Rockstok</a>
+  <a class="button primary" href="#query-booking">Query / Booking</a>
   <a class="button ghost" href="gigs.html">See Upcoming Gigs</a>
   <a class="button ghost" href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Shop Merch</a>
   <a class="button ghost" href="socials.html">Socials</a>
@@ -69,6 +69,7 @@
       </div>
     </section>
 
+    <!-- Public gig list is replaced by Firebase data when gigs-live.js loads. -->
     <section class="section wrap" id="gigs">
       <div class="section-heading">
         <div>
@@ -80,6 +81,7 @@
       <div class="gig-list" id="gigList"></div>
     </section>
 
+    <!-- Short band overview, with mobile read-more behavior handled in app.js. -->
     <section class="section wrap about-page-section" id="about">
       <div>
         <p class="eyebrow">About the band</p>
@@ -97,11 +99,12 @@
       </div>
     </section>
 
+    <!-- Event types and room styles Rockstok can play. -->
     <section class="section wrap" id="services">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Services</p>
-          <h2>Rockstok for the room you are planning.</h2>
+          <h2>Live rock for your event.</h2>
         </div>
         <p>From full dance floors to polished event sets, Rockstok brings live rock energy with the setup to match.</p>
       </div>
@@ -128,6 +131,7 @@
       </div>
     </section>
 
+    <!-- Set style and music examples. -->
     <section class="section services-section" id="music">
       <div class="wrap">
         <div class="section-heading">
@@ -169,6 +173,7 @@
       </div>
     </section>
 
+    <!-- Fourthwall merch preview; app.js falls back if the API is unavailable. -->
     <section class="section merch-section" id="merch">
       <div class="wrap">
         <div class="section-heading merch-heading">
@@ -186,6 +191,7 @@
       </div>
     </section>
 
+    <!-- Band member cards are rendered from config.js. -->
     <section class="section wrap" id="band">
       <div class="section-heading">
         <div>
@@ -197,81 +203,16 @@
       <div class="band-grid" id="bandGrid"></div>
     </section>
 
-    <section class="section wrap booking-section" id="enquiries">
+    <!-- Combined query / booking form; app.js switches field groups based on the first select. -->
+    <section class="section wrap booking-section" id="query-booking">
       <div class="booking-copy">
-        <p class="eyebrow">Enquiries</p>
-        <h2>Ask Rockstok anything.</h2>
-        <p>Use this for general questions about the band, merch, setlists, availability, media or anything that is not a full event booking.</p>
+        <p class="eyebrow">Query / Booking</p>
+        <h2>Ask a question or book an event.</h2>
+        <p>Send general questions, availability checks, merch queries or event details through one form.</p>
 
         <div class="contact-stack">
           <article class="contact-card glass-panel">
             <strong>Direct Contact</strong>
-            <span><a href="mailto:rockstokcovers@gmail.com">rockstokcovers@gmail.com</a></span>
-            <span>Sean - <a href="tel:+6421416091">021 416 091</a></span>
-            <span>Justin - <a href="tel:+64275186656">027 518 6656</a></span>
-          </article>
-        </div>
-      </div>
-
-      <form
-        id="general-enquiry-form"
-        class="booking-card glass-panel booking-form"
-        action="https://formspree.io/f/mlgkbrap"
-        method="POST"
-        data-ajax-form
-        data-sending-message="Sending your enquiry..."
-        data-success-message="Thanks! Your enquiry has been sent. We will be in touch soon."
-        data-error-message="Sorry, something went wrong. Please try again or email rockstokcovers@gmail.com."
-      >
-        <input type="hidden" name="_subject" value="New Rockstok General Enquiry" />
-
-        <label>
-          Your name
-          <input name="name" placeholder="Your name" required />
-        </label>
-
-        <label>
-          Email address
-          <input name="email" type="email" placeholder="Your email address" required />
-        </label>
-
-        <label>
-          Phone number
-          <input name="phone" type="tel" placeholder="Best phone number" />
-        </label>
-
-        <label>
-          Enquiry type
-          <select name="enquiry_type">
-            <option value="General question">General question</option>
-            <option value="Merch">Merch</option>
-            <option value="Music / setlist">Music / setlist</option>
-            <option value="Media">Media</option>
-            <option value="Availability">Availability</option>
-            <option value="Other">Other</option>
-          </select>
-        </label>
-
-        <label>
-          Message
-          <textarea name="message" rows="5" placeholder="What would you like to ask?" required></textarea>
-        </label>
-
-        <p class="form-status" aria-live="polite"></p>
-
-        <button class="button primary" type="submit">Send Enquiry</button>
-      </form>
-    </section>
-
-    <section class="section wrap booking-section" id="bookings">
-      <div class="booking-copy">
-        <p class="eyebrow">Bookings</p>
-        <h2>Bring Rockstok to your event.</h2>
-        <p>Tell us the date, location, event type, rough timings and anything important about the crowd or venue.</p>
-
-        <div class="contact-stack">
-          <article class="contact-card glass-panel">
-            <strong>Band Inquiries</strong>
             <span>Sean - <a href="tel:+6421416091">021 416 091</a></span>
             <span>Norm - <a href="tel:+64274432642">027 443 2642</a></span>
             <span>Justin - <a href="tel:+64275186656">027 518 6656</a></span>
@@ -289,6 +230,7 @@
         class="booking-card glass-panel booking-form"
         action="https://formspree.io/f/maqzqaob"
         method="POST"
+        data-query-booking-form
         data-ajax-form
         data-sending-message="Sending your booking enquiry..."
         data-success-message="Thanks! Your booking enquiry has been sent. We will be in touch soon."
@@ -300,36 +242,80 @@
           Your name
           <input name="name" placeholder="Your name" required />
         </label>
+
         <label>
-          Event date
-          <input name="date" type="date" />
-          <!-- Date inputs do not show placeholder text on many phones, so keep a visible example. -->
-          <span class="field-hint">Example: 14/09/2026</span>
+          Email address
+          <input name="email" type="email" placeholder="Your email address" required />
         </label>
+
         <label>
-          Venue / suburb / city
-          <input name="venue" placeholder="Venue, suburb, or city" />
+          Phone number
+          <input name="phone" type="tel" placeholder="Best phone number" />
         </label>
+
         <label>
-          Phone / email
-          <input name="contact" placeholder="Best phone number or email" required />
-        </label>
-        <label>
-          Event type
-          <select name="eventType">
-            <option value="Private event">Private event</option>
-            <option value="Pub / bar gig">Pub / bar gig</option>
-            <option value="Wedding">Wedding</option>
-            <option value="Birthday">Birthday</option>
-            <option value="Fundraiser">Fundraiser</option>
-            <option value="Corporate event">Corporate event</option>
-            <option value="Other">Other</option>
+          What is this about?
+          <select name="request_type" data-query-type>
+            <option value="booking">Booking</option>
+            <option value="query">Query / enquiry</option>
           </select>
         </label>
+
+        <div class="form-field-group" data-purpose-fields="booking">
+          <label>
+            Event type
+            <select name="event_type">
+              <option value="">Not sure yet</option>
+              <option value="Private event">Private event</option>
+              <option value="Pub / bar gig">Pub / bar gig</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Fundraiser">Fundraiser</option>
+              <option value="Corporate event">Corporate event</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label>
+            Event date
+            <input name="date" type="date" />
+          </label>
+
+          <label>
+            Venue / suburb / city
+            <input name="venue" placeholder="Venue, suburb, or city" />
+          </label>
+
+          <label>
+            Estimated attendance
+            <input
+              name="estimated_attendance"
+              type="number"
+              placeholder="Approximate number of guests"
+              min="1"
+            />
+          </label>
+        </div>
+
+        <div class="form-field-group" data-purpose-fields="query" hidden>
+          <label>
+            Query type
+            <select name="query_type" disabled>
+              <option value="General question">General question</option>
+              <option value="Availability">Availability</option>
+              <option value="Merch">Merch</option>
+              <option value="Music / setlist">Music / setlist</option>
+              <option value="Media">Media</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+        </div>
+
         <label>
-          Extra notes
-          <textarea name="notes" rows="5" placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..." required></textarea>
+          Message
+          <textarea name="message" rows="6" placeholder="Tell us about timing, crowd size, setup, song requests or anything useful..." required data-message-field></textarea>
         </label>
+
         <p class="form-status" aria-live="polite"></p>
         <button class="button primary" type="submit">Send Booking Enquiry</button>
       </form>
@@ -353,8 +339,7 @@
         <a href="gigs.html">Gigs</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="band.html">Band</a>
-        <a href="enquiries.html">Enquiries</a>
-        <a href="booking.html">Bookings</a>
+        <a href="#query-booking">Query / Booking</a>
       </div>
     </div>
   </footer>

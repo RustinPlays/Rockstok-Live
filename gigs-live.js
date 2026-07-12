@@ -10,9 +10,11 @@ import {
 
 import { firebaseConfig } from "./firebase-config.js";
 
+// Public pages only need Firestore; auth is handled separately on backstage.html.
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// index.html and gigs.html use different IDs, so support both with one loader.
 const gigsLists = [
   document.getElementById("gigs-list"),
   document.getElementById("gigList")
@@ -21,6 +23,8 @@ const gigsLists = [
 if (!gigsLists.length) {
   console.error("Could not find a public gigs list on this page.");
 } else {
+  // Firestore cannot order by date here without a composite index for the public filter,
+  // so the snapshot is filtered first and then sorted in the browser.
   const gigsQuery = query(
     collection(db, "gigs"),
     where("public", "==", true)
@@ -34,6 +38,7 @@ if (!gigsLists.length) {
       snapshot.forEach((doc) => {
         const gig = doc.data();
 
+        // Public gigs are hidden from visitors after the expiry window passes.
         if (isGigVisible(gig)) {
           gigs.push(gig);
         }
@@ -105,6 +110,7 @@ function renderGigsHtml(html) {
   });
 }
 
+// The hero "Next up" panel mirrors the first visible public gig.
 function updateNextGig(gig) {
   const nextGigTitle = document.getElementById("nextGigTitle");
   const nextGigDetails = document.getElementById("nextGigDetails");
@@ -140,6 +146,7 @@ function formatDate(dateString) {
   };
 }
 
+// Matches admin expiry: visible through the day after the event date.
 function isGigVisible(gig) {
   if (!gig?.date) return false;
 
@@ -167,6 +174,7 @@ function getGoogleMapsUrl(address, placeId = "") {
   return `https://www.google.com/maps/search/?${params.toString()}`;
 }
 
+// Public Firestore data is admin-entered, so escape before injecting HTML.
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")

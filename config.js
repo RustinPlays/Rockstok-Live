@@ -15,30 +15,30 @@ window.ROCKSTOK_CONFIG = {
   // to turn the backstage map address field into Google-style address suggestions.
   GOOGLE_MAPS_BROWSER_API_KEY: "",
 
-  // Testing address. Change this to rockstokcovers@gmail.com when ready.
-  bookingEmail: "Justin.oshea135@gmail.com",
-
-  // Add confirmed public gigs here. Example format:
+  // Static fallback gigs. Firebase events are used on the live site when gigs-live.js can load them.
+  // Example format:
   // { date: "2026-09-27", title: "Rockstok Live", venue: "Paraoa Brewing Co.", location: "Whangaparaoa", time: "8:00 PM", ticketUrl: "" }
   gigs: [],
-  
-songTags: [
-  "Dragon",
-  "The Cars",
-  "Green Day",
-  "My Chemical Romance",
-  "Hello Sailor",
-  "The Cure",
-  "Beastie Boys",
-  "R.E.M.",
-  "Pink Floyd",
-  "Guns N' Roses",
-  "The Killers",
-  "Foo Fighters",
-  "Original Rockstok Songs",
-  "Classic Covers",
-  "Modern Favourites"
-],
+
+  // Tags rendered in the "Set style" bubbles.
+  songTags: [
+    "Dragon",
+    "The Cars",
+    "Green Day",
+    "My Chemical Romance",
+    "Hello Sailor",
+    "The Cure",
+    "Beastie Boys",
+    "R.E.M.",
+    "Pink Floyd",
+    "The Killers",
+    "Foo Fighters",
+    "Original Rockstok Songs",
+    "Classic Covers",
+    "Modern Favourites"
+  ],
+
+  // Band cards and production support cards are rendered from this list.
   band: [
     {
       name: "Sean O'Shea",
@@ -67,7 +67,7 @@ songTags: [
     {
       name: "Justin O'Shea",
       role: "Sound and Lighting Technician",
-      bio: "Runs the sound, Lighting and live-show production details.",
+      bio: "Runs the sound, lighting and live-show production details.",
       image: "assets/Justin.png",
       type: "tech"
     }

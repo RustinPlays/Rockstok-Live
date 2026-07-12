@@ -1,20 +1,7 @@
 const cfg = window.ROCKSTOK_CONFIG || {};
 const $ = (selector) => document.querySelector(selector);
-const GIG_STORE_KEY = 'rockstokAdminGigs';
 
-function readStoredGigs() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(GIG_STORE_KEY) || 'null');
-    return Array.isArray(stored) ? stored : null;
-  } catch {
-    return null;
-  }
-}
-
-function getSiteGigs() {
-  return readStoredGigs() || cfg.gigs || [];
-}
-
+// Storefront and shop helpers keep Fourthwall settings normalized before links are built.
 function cleanBaseUrl() {
   if (cfg.FOURTHWALL_SHOP_BASE_URL) {
     return cfg.FOURTHWALL_SHOP_BASE_URL.replace(/\/$/, '');
@@ -41,6 +28,7 @@ function formatDate(dateString) {
   };
 }
 
+// Public gigs stay visible through the day after the event, matching the Firebase live loader.
 function isGigVisible(gig) {
   if (!gig?.date) return false;
   const expiry = new Date(`${gig.date}T23:59:59`);
@@ -49,6 +37,7 @@ function isGigVisible(gig) {
   return expiry >= new Date();
 }
 
+// Map links use a saved pin address first, then fall back to venue plus location.
 function getMapAddress(gig) {
   return (gig.mapAddress || [gig.venue, gig.location].filter(Boolean).join(', ')).trim();
 }
@@ -66,10 +55,11 @@ function getGoogleMapsUrl(address, placeId = '') {
   return `https://www.google.com/maps/search/?${params.toString()}`;
 }
 
+// Renders static fallback gigs from config.js. Firebase live gigs replace this on pages that load gigs-live.js.
 function renderGigs() {
   const list = $('#gigList');
   if (!list) return;
-  const gigs = [...getSiteGigs()]
+  const gigs = [...(cfg.gigs || [])]
     .filter(gig => gig && gig.date)
     .filter(isGigVisible)
     .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -121,18 +111,21 @@ function renderSongTags() {
   $('#songTags').innerHTML = tags.map(tag => `<span>${tag}</span>`).join('');
 }
 
+// Band data comes from config.js so names, roles, bios and photos can be updated in one place.
 function renderBand() {
   if (!$('#bandGrid')) return;
   const members = cfg.band || [];
+
   if (!members.length) {
-  $('#bandGrid').innerHTML = `
-    <article class="empty-card glass-panel">
-      <span class="pill">Coming soon</span>
-      <h3>Band member profiles are coming soon.</h3>
-      <p>In the meantime, follow Rockstok on social media or get in touch for bookings.</p>
-    </article>`;
-  return;
-}
+    $('#bandGrid').innerHTML = `
+      <article class="empty-card glass-panel">
+        <span class="pill">Coming soon</span>
+        <h3>Band member profiles are coming soon.</h3>
+        <p>In the meantime, follow Rockstok on social media or get in touch for bookings.</p>
+      </article>`;
+    return;
+  }
+
   const performers = members.filter(member => member.type !== 'tech');
   const techMembers = members.filter(member => member.type === 'tech');
 
@@ -153,7 +146,7 @@ function renderBand() {
       <div class="section-heading tech-heading">
         <div>
           <p class="eyebrow">Production</p>
-          <h3>Sound and Lighting support.</h3>
+          <h3>Sound and lighting support.</h3>
         </div>
         <p>The live show depends on the people making the room sound and look right.</p>
       </div>
@@ -175,6 +168,7 @@ function renderBand() {
   $('#bandGrid').innerHTML = performerCards + techCards;
 }
 
+// Fourthwall product shapes can vary slightly, so these helpers try the known image/price fields.
 function getProductImage(product) {
   return product?.thumbnail?.url || product?.image?.url || product?.images?.[0]?.url || product?.variants?.[0]?.image?.url || '';
 }
@@ -198,6 +192,7 @@ function productUrl(product) {
   return base || '#';
 }
 
+// Loads live merch from Fourthwall and falls back to simple placeholder cards if the API is unavailable.
 async function loadFourthwallProducts() {
   const notice = $('#merchNotice');
   const grid = $('#productGrid');
@@ -269,7 +264,60 @@ function renderFallbackProducts() {
     </article>`).join('');
 }
 
+// The same form handles bookings and general queries; hidden groups are disabled so Formspree only receives relevant fields.
 function setupBookingForm() {
+  document.querySelectorAll('form[data-query-booking-form]').forEach((formEl) => {
+    const typeSelect = formEl.querySelector('[data-query-type]');
+    const messageField = formEl.querySelector('[data-message-field]');
+    const submitButton = formEl.querySelector('button[type="submit"]');
+    const subjectField = formEl.querySelector('input[name="_subject"]');
+    const sendingMessages = {
+      booking: 'Sending your booking enquiry...',
+      query: 'Sending your query...'
+    };
+    const successMessages = {
+      booking: 'Thanks! Your booking enquiry has been sent. We will be in touch soon.',
+      query: 'Thanks! Your query has been sent. We will be in touch soon.'
+    };
+
+    const updateFormType = () => {
+      const selectedType = typeSelect?.value || 'booking';
+      const isBooking = selectedType === 'booking';
+
+      formEl.querySelectorAll('[data-purpose-fields]').forEach((group) => {
+        const isActive = group.dataset.purposeFields === selectedType;
+        group.hidden = !isActive;
+        group.querySelectorAll('input, select, textarea').forEach((field) => {
+          field.disabled = !isActive;
+        });
+      });
+
+      if (messageField) {
+        messageField.placeholder = isBooking
+          ? 'Tell us about timing, crowd size, setup, song requests or anything useful...'
+          : 'What would you like to ask?';
+      }
+
+      if (submitButton) {
+        submitButton.textContent = isBooking ? 'Send Booking Enquiry' : 'Send Query';
+      }
+
+      if (subjectField) {
+        subjectField.value = isBooking ? 'New Rockstok Booking Enquiry' : 'New Rockstok Query';
+      }
+
+      formEl.dataset.sendingMessage = sendingMessages[selectedType];
+      formEl.dataset.successMessage = successMessages[selectedType];
+    };
+
+    // Reset happens before browser fields return to defaults, so defer the visual update one tick.
+    typeSelect?.addEventListener('change', updateFormType);
+    formEl.addEventListener('reset', () => {
+      window.setTimeout(updateFormType, 0);
+    });
+    updateFormType();
+  });
+
   document.querySelectorAll('form[data-ajax-form]').forEach((formEl) => {
     formEl.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -284,6 +332,7 @@ function setupBookingForm() {
       if (submitButton) submitButton.disabled = true;
 
       try {
+        // Formspree accepts regular FormData, so the site can stay fully static.
         const response = await fetch(formEl.action, {
           method: formEl.method || 'POST',
           body: new FormData(formEl),
@@ -306,61 +355,20 @@ function setupBookingForm() {
       if (submitButton) submitButton.disabled = false;
     });
   });
-
-  // Old fallback mailto booking handler.
-  // Only runs on forms that explicitly opt in with data-mailto-booking.
-  // This prevents app.js from interfering with the Formspree booking form or the Firebase admin gig form.
-  document.querySelectorAll('form[data-mailto-booking]').forEach((formEl) => {
-    formEl.addEventListener('submit', (event) => {
-      event.preventDefault();
-
-      const form = new FormData(event.currentTarget);
-      const subject = encodeURIComponent('Rockstok booking enquiry');
-      const body = encodeURIComponent(
-        `Name: ${form.get('name')}\n` +
-        `Event date: ${form.get('date') || 'TBC'}\n` +
-        `Venue / Suburb / City: ${form.get('venue') || 'TBC'}\n` +
-        `Phone / Email: ${form.get('contact') || form.get('phone') || form.get('email') || 'TBC'}\n` +
-        `Event type: ${form.get('eventType') || form.get('event_type') || 'TBC'}\n\n` +
-        `Extra notes:\n${form.get('notes') || form.get('message') || 'None provided'}`
-      );
-
-      window.location.href = `mailto:${cfg.bookingEmail}?subject=${subject}&body=${body}`;
-    });
-  });
 }
 
+// Mobile navigation is shared across every public page.
 function setupNav() {
   const toggle = $('.nav-toggle');
   const links = $('#nav-links');
   if (!toggle || !links) return;
-
-  // Shared phone menu: toggles the nav and closes it after a visitor picks a link.
   toggle.addEventListener('click', () => {
     const open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(open));
   });
-
-  links.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      links.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
 }
 
-function setupTopLinks() {
-  // Footer "Top" links use #top; this makes them reliable even if the browser
-  // does not move because the hash is already present.
-  document.querySelectorAll('a[href="#top"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      event.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      history.replaceState(null, '', `${location.pathname}${location.search}#top`);
-    });
-  });
-}
-
+// About-page copy is shortened on small screens until the visitor expands it.
 function setupReadMore() {
   document.querySelectorAll('[data-collapsible-copy]').forEach((block) => {
     const button = block.querySelector('.read-more-toggle');
@@ -374,11 +382,11 @@ function setupReadMore() {
   });
 }
 
+// Page bootstrap: each renderer exits early when its target element is not on the current page.
 renderGigs();
 renderSongTags();
 renderBand();
 loadFourthwallProducts();
 setupBookingForm();
 setupNav();
-setupTopLinks();
 setupReadMore();
