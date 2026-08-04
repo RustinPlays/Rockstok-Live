@@ -85,6 +85,7 @@ function renderGigs() {
     const href = gig.ticketUrl || 'booking.html';
     const buttonText = gig.ticketUrl ? 'Details / Tickets' : 'Enquire';
     const mapAddress = getMapAddress(gig);
+    const calendarLink = window.ROCKSTOK_CALENDAR?.getCalendarLink(gig);
     return `
       <article class="gig-card glass-panel">
         <div class="gig-date"><span>${d ? d.month : 'TBC'}</span><strong>${d ? d.day : '--'}</strong></div>
@@ -93,7 +94,10 @@ function renderGigs() {
           <p class="gig-meta">${d ? d.full : 'Date TBC'} - ${gig.time || 'Time TBC'} - ${gig.venue || 'Venue TBC'}${gig.location ? ` - ${gig.location}` : ''}</p>
           ${mapAddress ? `<a class="gig-map-link" href="${getGoogleMapsUrl(mapAddress, gig.mapPlaceId)}" target="_blank" rel="noopener"><span class="map-pin-icon" aria-hidden="true"></span><span>${mapAddress}</span></a>` : ''}
         </div>
-        <a class="button ghost" href="${href}" ${gig.ticketUrl ? 'target="_blank" rel="noopener"' : ''}>${buttonText}</a>
+        <div class="gig-actions">
+          <a class="button ghost" href="${href}" ${gig.ticketUrl ? 'target="_blank" rel="noopener"' : ''}>${buttonText}</a>
+          ${calendarLink ? `<a class="button ghost calendar-button" href="${calendarLink.href}" download="${calendarLink.filename}">Add to Calendar</a>` : ''}
+        </div>
       </article>`;
   }).join('');
 
@@ -382,6 +386,18 @@ function setupReadMore() {
   });
 }
 
+// Package buttons preselect the matching option before the lighting enquiry form scrolls into view.
+function setupLightingPackageButtons() {
+  const packageSelect = document.querySelector('[data-lighting-package-select]');
+  if (!packageSelect) return;
+
+  document.querySelectorAll('[data-lighting-package]').forEach((button) => {
+    button.addEventListener('click', () => {
+      packageSelect.value = button.dataset.lightingPackage || '';
+    });
+  });
+}
+
 // Page bootstrap: each renderer exits early when its target element is not on the current page.
 renderGigs();
 renderSongTags();
@@ -390,3 +406,4 @@ loadFourthwallProducts();
 setupBookingForm();
 setupNav();
 setupReadMore();
+setupLightingPackageButtons();

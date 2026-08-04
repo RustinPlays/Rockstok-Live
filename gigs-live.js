@@ -65,6 +65,7 @@ if (!gigsLists.length) {
         const href = ticketLink || "booking.html";
         const buttonText = ticketLink ? "Details / Tickets" : "Enquire";
         const mapAddress = getMapAddress(gig);
+        const calendarLink = window.ROCKSTOK_CALENDAR?.getCalendarLink(gig);
 
         return `
           <article class="gig-card glass-panel">
@@ -82,7 +83,10 @@ if (!gigsLists.length) {
               ${gig.description ? `<p class="gig-meta">${escapeHtml(gig.description)}</p>` : ""}
             </div>
 
-            <a class="button ghost" href="${escapeHtml(href)}" ${ticketLink ? 'target="_blank" rel="noopener"' : ""}>${buttonText}</a>
+            <div class="gig-actions">
+              <a class="button ghost" href="${escapeHtml(href)}" ${ticketLink ? 'target="_blank" rel="noopener"' : ""}>${buttonText}</a>
+              ${calendarLink ? `<a class="button ghost calendar-button" href="${escapeHtml(calendarLink.href)}" download="${escapeHtml(calendarLink.filename)}">Add to Calendar</a>` : ""}
+            </div>
           </article>
         `;
       }).join(""));

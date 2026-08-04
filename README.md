@@ -10,6 +10,7 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `merch.html`: standalone Merch tab.
 - `band.html`: standalone Band tab.
 - `booking.html`: dedicated query / booking page linked from the main navigation.
+- `lighting.html`: standalone event lighting hire packages and enquiry form for Justin.
 - `styles.css`: colors, spacing, typography and responsive layout.
 - `config.js`: editable site data for fallback gigs, setlist tags, band members and shop settings.
 - `app.js`: renders fallback gigs, band members, merch cards, mobile menu and query / booking form behavior.
@@ -17,6 +18,7 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `gigs-live.js`: loads public events from Firebase onto `index.html` and `gigs.html`.
 - `admin-gigs.js`: handles private admin login, event creation, editing, visibility changes and deletion.
 - `assets/`: logo and band photos used by the website.
+- `assets/creative-lighting-packages-professional.pdf`: current downloadable lighting package and pricing guide.
 
 The main page still includes the full site content for now. Music and Services live under About instead of separate top-level nav pages.
 
@@ -69,6 +71,8 @@ Use `mapAddress` for the Google Maps pin address. If it is blank, the site uses 
 
 Public gig listings automatically hide events one day after the event date. Expired public events are automatically deleted after they have been expired for 30 days when the admin page loads. Hidden events remain in Firebase until they are deleted in admin.
 
+Each public gig includes an `Add to Calendar` button that downloads an `.ics` file. Recognised event times use the `Pacific/Auckland` time zone and a three-hour default duration. If the saved time cannot be recognised, the calendar entry is added as an all-day event with the original time text included in its description.
+
 The admin page is split into Make Event and Event List sections. Use Event List to switch between all, live, hidden and expired events. Public events automatically move into expired when their date has passed. The expired section includes a Remove All button for clearing old events sooner.
 
 ## Query / Booking Form
@@ -87,6 +91,8 @@ Current query / booking Formspree endpoint:
 ```html
 https://formspree.io/f/maqzqaob
 ```
+
+The lighting hire form on `lighting.html` also uses this endpoint and adds a lighting-specific subject line addressed to Justin.
 
 ## Google Maps Autocomplete
 

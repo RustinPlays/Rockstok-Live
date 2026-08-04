@@ -349,6 +349,8 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 .gig-date span { display: block; color: var(--accent-3); letter-spacing: .12em; font-weight: 900; }
 .gig-date strong { display: block; font-size: 2.1rem; }
 .gig-meta, .notice { color: var(--muted); }
+.gig-actions { display: grid; gap: 10px; min-width: 172px; }
+.calendar-button { color: var(--accent-3); }
 .empty-card { padding: 28px; display: grid; gap: 12px; justify-items: start; }
 .empty-card p { color: var(--muted); line-height: 1.7; max-width: 680px; }
 
@@ -368,6 +370,75 @@ h3 { font-size: clamp(1.45rem, 2.8vw, 2.05rem); }
 .service-bubble h3 {
   font-size: clamp(1.35rem, 2.8vw, 2.45rem);
   line-height: 1;
+}
+
+.faq-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 18px);
+  align-items: start;
+}
+
+.faq-item {
+  overflow: hidden;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.faq-item:hover,
+.faq-item[open] {
+  border-color: rgba(126,234,255,.42);
+  background: linear-gradient(180deg, rgba(16, 55, 76, 0.9), rgba(5, 19, 29, 0.82));
+}
+
+.faq-item summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 88px;
+  padding: 22px 68px 22px 24px;
+  color: var(--text);
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.3;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 1.35rem;
+  line-height: 1;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.faq-item[open] summary::after {
+  transform: translateY(-50%) rotate(45deg);
+  background: rgba(126,234,255,.12);
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: inherit;
+}
+
+.faq-item p {
+  margin: -2px 24px 0;
+  padding: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .services-section, .merch-section {
@@ -525,6 +596,169 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid rgba(126,234,255,.25);
   border-color: rgba(126,234,255,.46);
 }
+
+/* Standalone event lighting hire page. */
+.lighting-hero {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: var(--section-space);
+}
+.lighting-hero-grid {
+  min-height: min(680px, calc(100vh - 74px));
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr);
+  gap: var(--content-gap);
+  align-items: center;
+}
+.lighting-hero-copy h1 {
+  max-width: 11ch;
+  font-size: clamp(3.2rem, 6.4vw, 6.4rem);
+}
+.lighting-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.lighting-hero-panel {
+  padding: clamp(24px, 3vw, 36px);
+}
+.lighting-hero-panel h2 {
+  color: var(--accent-3);
+  font-size: clamp(3rem, 6vw, 5.4rem);
+}
+.lighting-hero-panel > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.7;
+}
+.lighting-hero-points {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+.lighting-hero-points span {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+  color: var(--accent-3);
+}
+.lighting-package-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 28px);
+}
+.lighting-package-card {
+  --tier-color: var(--accent);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(20px, 2.6vw, 30px);
+  overflow: hidden;
+}
+.lighting-package-card[data-tier="bronze"] { --tier-color: #d59a65; }
+.lighting-package-card[data-tier="silver"] { --tier-color: #d8e6ec; }
+.lighting-package-card[data-tier="gold"] { --tier-color: #ffd769; }
+.lighting-package-card[data-tier="platinum"] { --tier-color: #c5f7ff; }
+.lighting-card-visual {
+  position: relative;
+  min-height: 132px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(14px, 3vw, 34px);
+  padding: 24px 20px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: calc(var(--radius) - 12px);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.065), transparent),
+    #03101a;
+  overflow: hidden;
+}
+.lighting-card-visual::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--tier-color), transparent);
+  box-shadow: 0 0 18px var(--tier-color);
+}
+.lighting-card-visual::after {
+  content: "";
+  position: absolute;
+  inset: 26px 8% 0;
+  background: conic-gradient(from 165deg at 50% 0%, transparent 0 41%, color-mix(in srgb, var(--tier-color) 23%, transparent) 44% 56%, transparent 59% 100%);
+  filter: blur(3px);
+}
+.lighting-card-visual span {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--tier-color);
+  box-shadow: 0 0 18px var(--tier-color), 0 0 42px color-mix(in srgb, var(--tier-color) 55%, transparent);
+}
+.lighting-card-visual span:nth-child(even) { margin-top: 28px; }
+.lighting-card-visual-truss::before { height: 8px; }
+.lighting-package-heading .eyebrow { color: var(--tier-color); }
+.lighting-package-heading h3 { font-size: clamp(1.8rem, 3vw, 2.8rem); }
+.lighting-package-summary {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.lighting-service-prices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.lighting-service-prices div {
+  display: grid;
+  gap: 5px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+}
+.lighting-service-prices strong {
+  color: var(--tier-color);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: .9;
+}
+.lighting-service-prices span {
+  color: var(--muted);
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.lighting-package-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.lighting-package-list li::marker { color: var(--tier-color); }
+.lighting-package-card .button { margin-top: auto; }
+.lighting-details-section {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 80% 20%, rgba(126,234,255,.1), transparent 24rem),
+    rgba(255,255,255,.025);
+}
+.lighting-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 28px);
+}
+.lighting-enquiry-section { scroll-margin-top: 90px; }
+.lighting-form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .site-footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
 
 /* Footer columns, social buttons and utility links. */
@@ -738,7 +972,7 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
 }
 /* Tablet/mobile breakpoint: stack major grids into one column. */
 @media (max-width: 980px) {
-  .hero-grid, .two-col, .booking-section, .setlist { grid-template-columns: 1fr; }
+  .hero-grid, .two-col, .booking-section, .setlist, .lighting-hero-grid { grid-template-columns: 1fr; }
   .hero-grid { min-height: auto; }
   .hero-card { margin-top: 0; justify-self: stretch; max-width: none; }
   .stat-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -766,7 +1000,10 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
     text-align: left;
   }
   .services-grid, .product-grid, .band-grid { grid-template-columns: 1fr; }
+  .lighting-package-grid { grid-template-columns: 1fr; }
+  .lighting-info-grid { grid-template-columns: 1fr; }
   .service-bubble-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .faq-list { grid-template-columns: 1fr; }
   .tech-grid {
     grid-template-columns: 1fr;
   }
@@ -775,6 +1012,7 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .admin-event-actions { justify-items: start; }
   .admin-event-row em { white-space: normal; }
   .gig-card { grid-template-columns: 1fr; }
+  .gig-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-grid { gap: 22px; }
   .hero-card { padding: 12px; }
   .hero-actions, .stat-strip, .tag-cloud { gap: 9px; }
@@ -856,8 +1094,14 @@ code { background: rgba(255,255,255,.06); padding: 3px 6px; border-radius: 8px; 
   .nav-links { right: 11px; top: 62px; width: calc(100vw - 22px); }
   .glass-panel { border-radius: 20px; }
   .button { width: 100%; padding: 12px 14px; }
+  .lighting-form-row { grid-template-columns: 1fr; }
+  .lighting-service-prices { grid-template-columns: 1fr; }
+  .gig-actions { grid-template-columns: 1fr; }
   .stat-strip span, .pill, .tag-cloud span { width: 100%; justify-content: center; align-items: center; text-align: center; }
   .info-card, .setlist, .booking-card, .contact-card, .empty-card { padding: 18px; }
+  .faq-item summary { min-height: 78px; padding: 18px 58px 18px 18px; }
+  .faq-item summary::after { right: 18px; }
+  .faq-item p { margin: -2px 18px 0; padding-bottom: 20px; }
   .band-card { padding: 10px; }
   .band-content { padding: 16px 6px 6px; }
   .band-content h3 { font-size: clamp(1.08rem, 8vw, 1.55rem); }
