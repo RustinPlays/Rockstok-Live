@@ -398,6 +398,41 @@ function setupLightingPackageButtons() {
   });
 }
 
+function setupBackstageLinkVisibility() {
+  const links = document.querySelectorAll('.backstage-link');
+  if (!links.length) return;
+
+  const bottomThreshold = 24;
+
+  const updateVisibility = () => {
+    const documentHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    const isAtBottom = window.scrollY + window.innerHeight >= documentHeight - bottomThreshold;
+
+    links.forEach((link) => {
+      link.classList.toggle('is-visible', isAtBottom);
+      link.setAttribute('aria-hidden', String(!isAtBottom));
+
+      if (isAtBottom) {
+        link.removeAttribute('tabindex');
+      } else {
+        link.setAttribute('tabindex', '-1');
+      }
+    });
+  };
+
+  updateVisibility();
+  window.addEventListener('scroll', updateVisibility, { passive: true });
+  window.addEventListener('resize', updateVisibility);
+  window.addEventListener('load', updateVisibility);
+
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(updateVisibility).observe(document.body);
+  }
+}
+
 // Page bootstrap: each renderer exits early when its target element is not on the current page.
 renderGigs();
 renderSongTags();
@@ -407,3 +442,4 @@ setupBookingForm();
 setupNav();
 setupReadMore();
 setupLightingPackageButtons();
+setupBackstageLinkVisibility();

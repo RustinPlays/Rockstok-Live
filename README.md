@@ -1,3 +1,4 @@
+
 # Rockstok Website Notes
 
 This is a static website for Rockstok. It can be opened directly from `index.html` or uploaded to any static host.
@@ -11,12 +12,14 @@ This is a static website for Rockstok. It can be opened directly from `index.htm
 - `band.html`: standalone Band tab.
 - `booking.html`: dedicated query / booking page linked from the main navigation.
 - `lighting.html`: standalone event lighting hire packages and enquiry form for Justin.
+- `gallery.html`: public Rockstok show photo and video gallery.
 - `styles.css`: colors, spacing, typography and responsive layout.
 - `config.js`: editable site data for fallback gigs, setlist tags, band members and shop settings.
 - `app.js`: renders fallback gigs, band members, merch cards, mobile menu and query / booking form behavior.
 - `firebase-config.js`: Firebase project settings used by the live event loader and admin page.
 - `gigs-live.js`: loads public events from Firebase onto `index.html` and `gigs.html`.
-- `admin-gigs.js`: handles private admin login, event creation, editing, visibility changes and deletion.
+- `media-gallery.js`: loads public show and lighting media from Firebase.
+- `admin-gigs.js`: handles private admin login, gigs and gallery media uploads and management.
 - `assets/`: logo and band photos used by the website.
 - `assets/creative-lighting-packages-professional.pdf`: current downloadable lighting package and pricing guide.
 
@@ -74,6 +77,17 @@ Public gig listings automatically hide events one day after the event date. Expi
 Each public gig includes an `Add to Calendar` button that downloads an `.ics` file. Recognised event times use the `Pacific/Auckland` time zone and a three-hour default duration. If the saved time cannot be recognised, the calendar entry is added as an all-day event with the original time text included in its description.
 
 The admin page is split into Make Event and Event List sections. Use Event List to switch between all, live, hidden and expired events. Public events automatically move into expired when their date has passed. The expired section includes a Remove All button for clearing old events sooner.
+
+## Gallery Media
+
+Use the Gallery Media section in `backstage.html` to upload a photo or video to either:
+
+- Rockstok Show Gallery, displayed on `gallery.html`.
+- Lighting Event Gallery, displayed on `lighting.html`.
+
+Files are stored under `gallery/` in Firebase Storage. Their title, caption, destination, visibility and file URL are stored in the Firestore `galleryMedia` collection. Images can be up to 20 MB and videos up to 150 MB. MP4 and WebM are the safest video formats for browser playback.
+
+Firebase rules must allow public reads of public gallery records and authenticated admin writes. Firebase Storage must allow public reads and authenticated admin writes under `gallery/`. Keep the existing gig rules and add equivalent rules for `galleryMedia` and Storage; the client-side email allow-list is not a replacement for Firebase security rules.
 
 ## Query / Booking Form
 

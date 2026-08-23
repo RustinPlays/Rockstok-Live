@@ -20,12 +20,21 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
 import { firebaseConfig } from "./firebase-config.js";
 
 // Firebase services are shared by every admin action on this page.
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Keep the allow-list client-side for UI gating; Firestore/Auth rules should still enforce real access.
 const allowedEmails = [
@@ -67,11 +76,29 @@ const gigFormStatus = document.getElementById("gig-form-status");
 const adminGigsList = document.getElementById("admin-gigs-list");
 const adminEventSummary = document.getElementById("admin-event-summary");
 
+// Gallery media controls. Files are stored in Firebase Storage and metadata lives in Firestore.
+const mediaForm = document.getElementById("media-form");
+const mediaFormTitle = document.getElementById("media-form-title");
+const mediaGalleryInput = document.getElementById("media-gallery");
+const mediaFileInput = document.getElementById("media-file");
+const mediaTitleInput = document.getElementById("media-title");
+const mediaCaptionInput = document.getElementById("media-caption");
+const mediaPublicInput = document.getElementById("media-public");
+const mediaSubmitButton = document.getElementById("media-submit-button");
+const mediaCancelEditButton = document.getElementById("media-cancel-edit-button");
+const mediaFormStatus = document.getElementById("media-form-status");
+const mediaUploadProgressBar = document.getElementById("media-upload-progress-bar");
+const adminMediaSummary = document.getElementById("admin-media-summary");
+const adminMediaList = document.getElementById("admin-media-list");
+
 let unsubscribeGigs = null;
+let unsubscribeMedia = null;
 let editingGigId = null;
 let savedGigsById = new Map();
 let savedGigItems = [];
 let activeGigFilter = "live";
+let savedMediaItems = [];
+let editingMediaId = null;
 const expiredAutoDeleteDays = 30;
 
 // Start locked down until Firebase auth confirms an allowed admin account.
@@ -117,6 +144,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user && allowedEmails.includes(userEmail)) {
     showAdminPanel();
     loadSavedGigs();
+    loadSavedMedia();
     return;
   }
 
@@ -125,6 +153,11 @@ onAuthStateChanged(auth, async (user) => {
   if (unsubscribeGigs) {
     unsubscribeGigs();
     unsubscribeGigs = null;
+  }
+
+  if (unsubscribeMedia) {
+    unsubscribeMedia();
+    unsubscribeMedia = null;
   }
 
   if (user && !allowedEmails.includes(userEmail)) {
@@ -195,6 +228,160 @@ gigCancelEditButton?.addEventListener("click", () => {
   gigFormStatus.textContent = "Edit cancelled.";
 });
 
+mediaForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const currentEmail = auth.currentUser?.email?.toLowerCase() || "";
+  const file = mediaFileInput.files?.[0];
+
+  if (!auth.currentUser || !allowedEmails.includes(currentEmail)) {
+    mediaFormStatus.textContent = "Please log in before uploading media.";
+    hideAdminPanel();
+    return;
+  }
+
+  if (editingMediaId) {
+    mediaSubmitButton.disabled = true;
+    mediaFormStatus.textContent = "Updating gallery item...";
+
+    try {
+      await updateDoc(doc(db, "galleryMedia", editingMediaId), {
+        gallery: mediaGalleryInput.value,
+        title: mediaTitleInput.value.trim(),
+        caption: mediaCaptionInput.value.trim(),
+        public: mediaPublicInput.value === "true",
+        updatedAt: serverTimestamp()
+      });
+      resetMediaForm();
+      mediaFormStatus.textContent = "Gallery item updated.";
+    } catch (error) {
+      console.error(error);
+      mediaFormStatus.textContent = "Could not update this gallery item.";
+    } finally {
+      mediaSubmitButton.disabled = false;
+    }
+    return;
+  }
+
+  if (!file) {
+    mediaFormStatus.textContent = "Choose a photo or video to upload.";
+    return;
+  }
+
+  if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+    mediaFormStatus.textContent = "Please choose an image or video file.";
+    return;
+  }
+
+  const maxFileSize = file.type.startsWith("video/") ? 150 * 1024 * 1024 : 20 * 1024 * 1024;
+  if (file.size > maxFileSize) {
+    mediaFormStatus.textContent = file.type.startsWith("video/")
+      ? "Videos must be 150 MB or smaller."
+      : "Images must be 20 MB or smaller.";
+    return;
+  }
+
+  mediaSubmitButton.disabled = true;
+  mediaUploadProgressBar.style.width = "0%";
+  mediaFormStatus.textContent = "Starting upload...";
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+  const storagePath = `gallery/${mediaGalleryInput.value}/${Date.now()}-${safeName}`;
+  const fileRef = storageRef(storage, storagePath);
+  const uploadTask = uploadBytesResumable(fileRef, file, { contentType: file.type });
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      mediaUploadProgressBar.style.width = `${progress}%`;
+      mediaFormStatus.textContent = `Uploading ${progress}%...`;
+    },
+    (error) => {
+      console.error(error);
+      mediaSubmitButton.disabled = false;
+      mediaFormStatus.textContent = "Upload failed. Check Firebase Storage rules and try again.";
+    },
+    async () => {
+      try {
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
+        await addDoc(collection(db, "galleryMedia"), {
+          gallery: mediaGalleryInput.value,
+          title: mediaTitleInput.value.trim(),
+          caption: mediaCaptionInput.value.trim(),
+          type: file.type.startsWith("video/") ? "video" : "image",
+          contentType: file.type,
+          url,
+          storagePath,
+          public: mediaPublicInput.value === "true",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        resetMediaForm();
+        mediaFormStatus.textContent = "Media uploaded and added to the selected gallery.";
+      } catch (error) {
+        console.error(error);
+        try {
+          await deleteObject(uploadTask.snapshot.ref);
+        } catch (cleanupError) {
+          console.warn("Could not remove the upload after its gallery entry failed.", cleanupError);
+        }
+        mediaFormStatus.textContent = "The file uploaded, but its gallery entry could not be saved. Check Firestore rules.";
+      } finally {
+        mediaSubmitButton.disabled = false;
+      }
+    }
+  );
+});
+
+adminMediaList?.addEventListener("click", async (event) => {
+  const button = event.target.closest("button[data-media-id]");
+  if (!button) return;
+
+  const item = savedMediaItems.find((mediaItem) => mediaItem.id === button.dataset.mediaId);
+  if (!item) return;
+
+  try {
+    if (button.classList.contains("edit-media-button")) {
+      startEditingMedia(item);
+      return;
+    }
+
+    if (button.classList.contains("toggle-media-button")) {
+      await updateDoc(doc(db, "galleryMedia", item.id), {
+        public: !item.public,
+        updatedAt: serverTimestamp()
+      });
+      return;
+    }
+
+    if (button.classList.contains("delete-media-button")) {
+      const confirmed = confirm(`Permanently delete “${item.title || "this media item"}”?`);
+      if (!confirmed) return;
+
+      button.disabled = true;
+      if (item.storagePath) {
+        try {
+          await deleteObject(storageRef(storage, item.storagePath));
+        } catch (error) {
+          if (error?.code !== "storage/object-not-found") throw error;
+        }
+      }
+      await deleteDoc(doc(db, "galleryMedia", item.id));
+    }
+  } catch (error) {
+    console.error(error);
+    button.disabled = false;
+    alert("Could not update this gallery item. Check Firebase rules.");
+  }
+});
+
+mediaCancelEditButton?.addEventListener("click", () => {
+  resetMediaForm();
+  mediaFormStatus.textContent = "Media edit cancelled.";
+});
+
 [gigVenueInput, gigLocationInput, gigMapAddressInput].forEach((input) => {
   input?.addEventListener("input", updateMapPreview);
 });
@@ -216,6 +403,7 @@ function hideAdminPanel() {
   adminPanel.hidden = true;
   setSessionLinksVisible(false);
   resetGigForm();
+  resetMediaForm();
 }
 
 function setSessionLinksVisible(visible) {
@@ -235,6 +423,100 @@ function setupBackstageFade() {
 
   updateFade();
   window.addEventListener("scroll", updateFade, { passive: true });
+}
+
+function loadSavedMedia() {
+  if (unsubscribeMedia || !adminMediaList) return;
+
+  unsubscribeMedia = onSnapshot(
+    collection(db, "galleryMedia"),
+    (snapshot) => {
+      savedMediaItems = snapshot.docs
+        .map((mediaDoc) => ({ id: mediaDoc.id, ...mediaDoc.data() }))
+        .sort((a, b) => getMediaTimestamp(b) - getMediaTimestamp(a));
+
+      renderAdminMedia();
+    },
+    (error) => {
+      console.error(error);
+      adminMediaList.innerHTML = "<p>Could not load gallery media. Check Firestore rules.</p>";
+    }
+  );
+}
+
+function renderAdminMedia() {
+  if (!adminMediaList || !adminMediaSummary) return;
+
+  const showCount = savedMediaItems.filter((item) => item.gallery === "shows").length;
+  const lightingCount = savedMediaItems.filter((item) => item.gallery === "lighting").length;
+  const publicCount = savedMediaItems.filter((item) => item.public !== false).length;
+
+  adminMediaSummary.innerHTML = `
+    <span><strong>${showCount}</strong> show gallery</span>
+    <span><strong>${lightingCount}</strong> lighting gallery</span>
+    <span><strong>${publicCount}</strong> public</span>
+  `;
+
+  if (!savedMediaItems.length) {
+    adminMediaList.innerHTML = "<p>No gallery media uploaded yet.</p>";
+    return;
+  }
+
+  adminMediaList.innerHTML = savedMediaItems.map((item) => {
+    const title = escapeHtml(item.title || "Untitled media");
+    const galleryLabel = item.gallery === "lighting" ? "Lighting Event Gallery" : "Rockstok Show Gallery";
+    const preview = item.type === "video"
+      ? `<video src="${escapeHtml(item.url || "")}" muted preload="metadata" playsinline></video>`
+      : `<img src="${escapeHtml(item.url || "")}" alt="" loading="lazy" />`;
+
+    return `
+      <article class="admin-media-card">
+        <div class="admin-media-preview">${preview}</div>
+        <div class="admin-media-copy">
+          <strong>${title}</strong>
+          <span>${galleryLabel}</span>
+          <span>${item.type === "video" ? "Video" : "Photo"} · ${item.public === false ? "Hidden" : "Public"}</span>
+          ${item.caption ? `<p>${escapeHtml(item.caption)}</p>` : ""}
+        </div>
+        <div class="admin-gig-actions">
+          <button class="button small edit-media-button" type="button" data-media-id="${item.id}">Edit</button>
+          <button class="button small toggle-media-button" type="button" data-media-id="${item.id}">${item.public === false ? "Show" : "Hide"}</button>
+          <button class="button small delete-media-button" type="button" data-media-id="${item.id}">Delete</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function startEditingMedia(item) {
+  editingMediaId = item.id;
+  mediaGalleryInput.value = item.gallery === "lighting" ? "lighting" : "shows";
+  mediaTitleInput.value = item.title || "";
+  mediaCaptionInput.value = item.caption || "";
+  mediaPublicInput.value = item.public === false ? "false" : "true";
+  mediaFileInput.disabled = true;
+  mediaFormTitle.textContent = "Edit gallery item";
+  mediaSubmitButton.textContent = "Update Media";
+  mediaCancelEditButton.hidden = false;
+  mediaFormStatus.textContent = "Update the title, caption, destination or visibility.";
+  document.getElementById("media-manager")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  mediaTitleInput.focus({ preventScroll: true });
+}
+
+function resetMediaForm() {
+  editingMediaId = null;
+  mediaForm?.reset();
+  mediaGalleryInput.value = "shows";
+  mediaPublicInput.value = "true";
+  mediaFileInput.disabled = false;
+  mediaFormTitle.textContent = "Upload a photo or video";
+  mediaSubmitButton.textContent = "Upload Media";
+  mediaCancelEditButton.hidden = true;
+  mediaUploadProgressBar.style.width = "0%";
+}
+
+function getMediaTimestamp(item) {
+  return item.createdAt?.toMillis?.() || item.updatedAt?.toMillis?.() || 0;
 }
 
 // Live admin list: Firestore pushes every change, then the current filter re-renders the visible cards.

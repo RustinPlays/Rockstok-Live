@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Rockstok Band Members | Auckland Rock Band</title>
-  <meta name="description" content="Meet the Rockstok band members behind the Auckland rock band." />
+  <title>Show Gallery | Rockstok Auckland</title>
+  <meta name="description" content="Photos and videos from Rockstok live shows, events and performances across Auckland." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="apple-touch-icon" href="assets/logo.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=gallery-20260822-1" />
 </head>
+
 <body>
   <div class="smoke-bg smoke-a"></div>
   <div class="smoke-bg smoke-b"></div>
@@ -24,10 +25,10 @@
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="gigs.html">Gigs</a>
-        <a href="gallery.html">Gallery</a>
+        <a class="active" href="gallery.html">Gallery</a>
         <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
         <a href="lighting.html">Lighting Hire</a>
-        <a class="active" href="band.html">Band</a>
+        <a href="band.html">Band</a>
         <a href="booking.html">Query / Booking</a>
         <a href="socials.html">Socials</a>
       </div>
@@ -35,15 +36,29 @@
   </header>
 
   <main>
-    <section class="section wrap page-section" id="band">
-      <div class="section-heading band-page-heading">
-        <div>
-          <p class="eyebrow">Meet the band</p>
-          <h1>The people behind Rockstok.</h1>
-        </div>
-        <p>Four players, one loud night out.</p>
+    <section class="section-top gallery-hero">
+      <div class="wrap gallery-hero-copy">
+        <p class="eyebrow">Rockstok shows</p>
+        <h1>Live, loud and in the room.</h1>
+        <p class="lead">Photos and videos from Rockstok gigs, private events and nights worth remembering.</p>
+        <a class="button primary" href="#show-gallery">View the gallery</a>
       </div>
-      <div class="band-grid" id="bandGrid"></div>
+    </section>
+
+    <section class="section wrap" id="show-gallery">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Show gallery</p>
+          <h2>From the stage.</h2>
+        </div>
+        <p>Fresh show media is added from Rockstok Backstage.</p>
+      </div>
+
+      <div class="media-gallery-grid" data-media-gallery="shows" aria-live="polite">
+        <article class="media-gallery-empty glass-panel">
+          <h3>Loading the gallery...</h3>
+        </article>
+      </div>
     </section>
   </main>
 
@@ -51,7 +66,7 @@
     <div class="wrap footer-grid">
       <div>
         <strong>Rockstok</strong>
-        <p>Classic covers, original music, upcoming gigs, merch and bookings.</p>
+        <p>Live music, event lighting hire, upcoming gigs, merch and bookings.</p>
       </div>
       <div class="footer-social">
         <span>Follow Rockstok</span>
@@ -60,21 +75,16 @@
       </div>
       <div class="footer-links">
         <a href="#top">Top</a>
-        <a href="about.html">About</a>
         <a href="gigs.html">Gigs</a>
-        <a href="https://rockstok-shop.fourthwall.com/en-nzd" target="_blank" rel="noopener">Merch</a>
+        <a href="gallery.html">Gallery</a>
         <a href="lighting.html">Lighting Hire</a>
-        <a href="band.html">Band</a>
         <a href="booking.html">Query / Booking</a>
       </div>
     </div>
   </footer>
 
-  <a class="backstage-link" href="backstage.html" target="_blank" rel="noopener" aria-label="Backstage access">
-    <img src="assets/logo.png" alt="" />
-  </a>
-
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script type="module" src="media-gallery.js"></script>
 </body>
 </html>
